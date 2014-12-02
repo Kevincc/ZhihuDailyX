@@ -33,7 +33,6 @@ public class ZhihuDailyApplication extends Application {
         // TODO Auto-generated method stub
         super.onTerminate();
 
-        DataBaseManager.getInstance().closeDB();
         DataCache.getInstance().clearAllCache();
 
         long livetime = SystemClock.elapsedRealtime() - mStatTime;
