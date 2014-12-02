@@ -2,6 +2,7 @@ package com.kevin.zhihudaily.db;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.Constants.Action;
 import com.kevin.zhihudaily.DebugLog;
@@ -20,6 +21,7 @@ import java.util.Locale;
 public class DataService extends IntentService {
 
     private BroadcastNotifier mBroadcastNotifier = new BroadcastNotifier(this);
+    private NewsDao dao;
 
     public DataService() {
         super(DataService.class.getSimpleName());
@@ -41,7 +43,22 @@ public class DataService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // TODO Auto-generated method stub
+        if (intent == null) {
+            DebugLog.d("Intent is null!");
+            return;
+        }
         DebugLog.d(intent.toString());
+        final Intent paraIntent = intent;
+        DataBaseManager.getInstance().executeQuery(new QueryExecutor() {
+            @Override public void run(SQLiteDatabase database) {
+                dao = new NewsDao(database);
+                executeDBAction(paraIntent);
+            }
+        });
+
+    }
+
+    private void executeDBAction(Intent intent) {
         String action = intent.getAction();
         Action actionType = Action.ACTION_NONE;
         try {
@@ -70,13 +87,13 @@ public class DataService extends IntentService {
                 break;
             }
 
-            DataBaseManager.getInstance().updateNewsBodyToDB(id, body, null);
+            dao.updateNewsBodyToDB(id, body, null);
             break;
         case ACTION_READ_DAILY_NEWS:
             if (date == null) {
                 break;
             }
-            DailyNewsModel dailyNewsModel = DataBaseManager.getInstance().readDaliyNewsList(date);
+            DailyNewsModel dailyNewsModel = dao.readDaliyNewsList(date);
             if (dailyNewsModel != null) {
                 DataCache.getInstance().addDailyCache(dailyNewsModel.getDate(), dailyNewsModel);
 
@@ -85,7 +102,7 @@ public class DataService extends IntentService {
             }
             break;
         case ACTION_READ_LASTEST_NEWS:
-            DailyNewsModel lastestNewsModel = DataBaseManager.getInstance().readLastestNewsList();
+            DailyNewsModel lastestNewsModel = dao.readLastestNewsList();
             DebugLog.e("==Model size==" + lastestNewsModel.toString());
             if (lastestNewsModel != null) {
                 DataCache.getInstance().addDailyCache(lastestNewsModel.getDate(), lastestNewsModel);
@@ -99,7 +116,7 @@ public class DataService extends IntentService {
                 break;
             }
             //            String news_body = DataBaseManager.getInstance().readNewsBody(news_id);
-            NewsModel model = DataBaseManager.getInstance().readNewsBodyAndImageSource(id);
+            NewsModel model = dao.readNewsBodyAndImageSource(id);
             if (model != null) {
                 // Update to db
                 DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
@@ -129,7 +146,6 @@ public class DataService extends IntentService {
         default:
             break;
         }
-
     }
 
     private void requestTodayNews() {
@@ -204,10 +220,9 @@ public class DataService extends IntentService {
             //                return;
             //            }
 
-            DataBaseManager.getInstance().writeDailyNewsToDB(model);
+            dao.writeDailyNewsToDB(model);
 
-            ArrayList<Integer> lacklist = (ArrayList<Integer>) DataBaseManager.getInstance()
-                    .getNewsDetailLackList(date);
+            ArrayList<Integer> lacklist = (ArrayList<Integer>) dao.getNewsDetailLackList(date);
             if (lacklist == null || lacklist.size() == 0) {
                 // notify ui to update
                 mBroadcastNotifier.notifyProgress(100);
@@ -238,7 +253,7 @@ public class DataService extends IntentService {
                 }
 
                 // Write to DB
-                DataBaseManager.getInstance().updateNewsListToDB(newslist);
+                dao.updateNewsListToDB(newslist);
 
                 // notify ui to update
                 mBroadcastNotifier.notifyProgress(100);
