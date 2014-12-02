@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+
+    <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:paddingLeft="@dimen/section_padding_left"
+            android:paddingRight="@dimen/section_padding_right"
+            android:paddingTop="@dimen/section_padding_top_bottom"
+            android:paddingBottom="@dimen/section_padding_top_bottom"
+            android:text="2014.3.6 星期四"
+            android:textAppearance="@style/Text.SectionItemDefault"
+            android:background="@color/colorPrimary"
+            />
+</LinearLayout>

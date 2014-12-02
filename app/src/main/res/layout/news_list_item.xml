@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingLeft="@dimen/list_padding_left_right"
+              android:paddingRight="@dimen/list_padding_left_right"
+              android:orientation="horizontal">
+    <ImageView
+            android:id="@+id/iv_thumbnai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:src="@drawable/ic_launcher"
+            />
+    <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="苹果公布汽车控制系统CarPlay"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            />
+</LinearLayout>
