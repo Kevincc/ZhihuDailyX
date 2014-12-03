@@ -1,12 +1,10 @@
 package com.kevin.zhihudaily.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -14,13 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import com.halfbit.tinybus.Bus;
+import com.halfbit.tinybus.Subscribe;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.DebugLog;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
-import com.kevin.zhihudaily.db.DataCache;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
@@ -31,16 +28,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     @InjectView(R.id.rv_list)
     RecyclerView rvList;
 
-    private DrawerLayout drawer;
-    private NewsListAdapter newsListAdapter;
+    @InjectView(R.id.drawer)
+    DrawerLayout drawer;
 
-    private DataReadyReceiver mDataReadyReceiver;
-    private Bus mBus;
+    @InjectView(R.id.swipe_container)
+    SwipeRefreshLayout mSwipeLayout;
+
+    private NewsListAdapter newsListAdapter;
 
     /**
      * A mark for reset all list data
@@ -55,13 +54,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer);
-        drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
-
-        ButterKnife.inject(this);
-
-        setupToolbar();
-        setupList();
+        // init views
+        initViews();
     }
 
     @Override protected int getLayoutResource() {
@@ -75,7 +69,7 @@ public class MainActivity extends BaseActivity {
 
     @Override protected void onStop() {
         ZhihuDailyApplication.getInstance().getBus().unregister(this);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReadyReceiver);
+        //        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReadyReceiver);
         super.onStop();
     }
 
@@ -101,6 +95,19 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void initViews() {
+        ButterKnife.inject(this);
+        drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
+
+        mSwipeLayout.setOnRefreshListener(this);
+        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light, android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        setupToolbar();
+        setupList();
+    }
+
     private void setupToolbar() {
         setToolbarIcon(R.drawable.ic_ab_drawer);
     }
@@ -113,10 +120,10 @@ public class MainActivity extends BaseActivity {
         newsListAdapter = new NewsListAdapter(this);
         rvList.setAdapter(newsListAdapter);
 
-        mDataReadyReceiver = new DataReadyReceiver();
-        IntentFilter dataIntentFilter = new IntentFilter(Constants.Action.ACTION_NOTIFY_NEWS_LIST_UI.toString());
-        dataIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mDataReadyReceiver, dataIntentFilter);
+        //        mDataReadyReceiver = new DataReadyReceiver();
+        //        IntentFilter dataIntentFilter = new IntentFilter(Constants.Action.ACTION_NOTIFY_NEWS_LIST_UI.toString());
+        //        dataIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        //        LocalBroadcastManager.getInstance(this).registerReceiver(mDataReadyReceiver, dataIntentFilter);
 
         Calendar calendar = Calendar.getInstance();
         mTodayDate = calendar.getTime();
@@ -155,37 +162,15 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private class DataReadyReceiver extends BroadcastReceiver {
-        // Prevents instantiation
-        private DataReadyReceiver() {
+    @Subscribe public void onNewsReadyEvent(DailyNewsModel model) {
+        if (model == null) {
+            return;
         }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
-            String action = intent.getAction();
-            if (action == null || !Constants.Action.ACTION_NOTIFY_NEWS_LIST_UI.toString().equals(action)) {
-                return;
-            }
-
-            int notifyType = intent.getIntExtra(Constants.EXTRA_NOTIFY_UI, -1);
-            if (notifyType == Constants.NOTIFY_NEWS_LIST_READY) {
-                String date = intent.getStringExtra(Constants.EXTRA_CACHE_KEY);
-
-                // update index date
-                mIndexDate = date;
-                DebugLog.d("==Index date==" + mIndexDate);
-
-                DailyNewsModel model = DataCache.getInstance().getDailyNewsModel(date);
-
-                updateNewsList(model);
-
-            } else if (notifyType == Constants.NOTIFY_OFFLINE_DATA_READY) {
-                int progress = intent.getIntExtra(Constants.EXTRA_PROGRESS_PROGRESS, -1);
-                //                updateNotification(progress);
-            }
-
-        }
+        // update index date
+        mIndexDate = model.getDate();
+        DebugLog.d("==Index date==" + mIndexDate);
+        updateNewsList(model);
     }
 
     private void updateNewsList(DailyNewsModel model) {
@@ -245,5 +230,14 @@ public class MainActivity extends BaseActivity {
         //                }
         //            }, 2000);
         //        }
+    }
+
+    @Override public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeLayout.setRefreshing(false);
+            }
+        }, 3000);
     }
 }

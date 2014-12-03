@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.Constants.Action;
 import com.kevin.zhihudaily.DebugLog;
-import com.kevin.zhihudaily.http.BroadcastNotifier;
+import com.kevin.zhihudaily.ZhihuDailyApplication;
 import com.kevin.zhihudaily.http.ZhihuRequest;
 import com.kevin.zhihudaily.model.CommentsModel;
 import com.kevin.zhihudaily.model.DailyNewsModel;
@@ -20,7 +20,6 @@ import java.util.Locale;
 
 public class DataService extends IntentService {
 
-    private BroadcastNotifier mBroadcastNotifier = new BroadcastNotifier(this);
     private NewsDao dao;
 
     public DataService() {
@@ -98,7 +97,7 @@ public class DataService extends IntentService {
                 DataCache.getInstance().addDailyCache(dailyNewsModel.getDate(), dailyNewsModel);
 
                 // notify ui to update
-                mBroadcastNotifier.notifyDailyNewsDataReady(date);
+                //                mBroadcastNotifier.notifyDailyNewsDataReady(date);
             }
             break;
         case ACTION_READ_LASTEST_NEWS:
@@ -108,7 +107,7 @@ public class DataService extends IntentService {
                 DataCache.getInstance().addDailyCache(lastestNewsModel.getDate(), lastestNewsModel);
 
                 // notify ui to update
-                mBroadcastNotifier.notifyDailyNewsDataReady(lastestNewsModel.getDate());
+                //                mBroadcastNotifier.notifyDailyNewsDataReady(lastestNewsModel.getDate());
             }
             break;
         case ACTION_READ_NEWS_DEATIL:
@@ -122,7 +121,7 @@ public class DataService extends IntentService {
                 DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
 
                 // Notify ui to update
-                mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
+                //                mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
             }
             break;
         case ACTION_GET_TODAY_NEWS:
@@ -163,10 +162,8 @@ public class DataService extends IntentService {
                         DataBaseManager.getInstance().setDataTimeStamp(newTimeStamp);
                     }
 
-                    DataCache.getInstance().addDailyCache(model.getDate(), model);
-
                     // notify ui to update
-                    mBroadcastNotifier.notifyDailyNewsDataReady(model.getDate());
+                    ZhihuDailyApplication.getInstance().getBus().post(model);
                 }
 
             }
@@ -182,10 +179,8 @@ public class DataService extends IntentService {
     private void requestDailyNewsByDate(String date) {
         DailyNewsModel model = ZhihuRequest.getRequestService().getDailyNewsByDate(date);
         if (model != null) {
-            DataCache.getInstance().addDailyCache(model.getDate(), model);
-
             // notify ui to update
-            mBroadcastNotifier.notifyDailyNewsDataReady(model.getDate());
+            ZhihuDailyApplication.getInstance().getBus().post(model);
         }
     }
 
@@ -196,7 +191,7 @@ public class DataService extends IntentService {
             DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
 
             // Notify ui to update
-            mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
+            //            mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
         }
     }
 
@@ -225,7 +220,7 @@ public class DataService extends IntentService {
             ArrayList<Integer> lacklist = (ArrayList<Integer>) dao.getNewsDetailLackList(date);
             if (lacklist == null || lacklist.size() == 0) {
                 // notify ui to update
-                mBroadcastNotifier.notifyProgress(100);
+                //                mBroadcastNotifier.notifyProgress(100);
                 return;
             }
 
@@ -248,7 +243,7 @@ public class DataService extends IntentService {
 
                     // notify ui to update
                     progress += incr;
-                    mBroadcastNotifier.notifyProgress(progress);
+                    //                    mBroadcastNotifier.notifyProgress(progress);
 
                 }
 
@@ -256,7 +251,7 @@ public class DataService extends IntentService {
                 dao.updateNewsListToDB(newslist);
 
                 // notify ui to update
-                mBroadcastNotifier.notifyProgress(100);
+                //                mBroadcastNotifier.notifyProgress(100);
             }
         }
     }
@@ -268,7 +263,7 @@ public class DataService extends IntentService {
         DataCache.getInstance().addCommentsCache(id, model);
 
         // notify ui to update
-        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_LONG);
+        //        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_LONG);
     }
 
     private void requestShortComments(int id) {
@@ -278,7 +273,7 @@ public class DataService extends IntentService {
         DataCache.getInstance().addCommentsCache(id, model);
 
         // notify ui to update
-        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_SHORT);
+        //        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_SHORT);
     }
 
 }
