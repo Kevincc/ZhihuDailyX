@@ -6,7 +6,16 @@
     <dimen name="btn_fab_margins">16dp</dimen>
     <dimen name="default_elevation">8dp</dimen>
     <dimen name="comment_avatar_size">56dp</dimen>
-    <dimen name="list_padding_left_right">10dp</dimen>
+
+    <dimen name="cardview_item_margin">3dp</dimen>
+    <dimen name="cardview_item_radius">1dp</dimen>
+    <dimen name="cardview_section_margin">3dp</dimen>
+    <dimen name="cardview_section_radius">1dp</dimen>
+
+    <dimen name="list_padding_left">10dp</dimen>
+    <dimen name="list_padding_right">0dp</dimen>
+    <dimen name="list_image_margin">0dp</dimen>
+    <dimen name="list_text_margin">5dp</dimen>
     <dimen name="section_padding_left">50dp</dimen>
     <dimen name="section_padding_right">10dp</dimen>
     <dimen name="section_padding_top_bottom">9dp</dimen>

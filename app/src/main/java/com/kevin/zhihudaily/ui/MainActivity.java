@@ -14,15 +14,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.halfbit.tinybus.Bus;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.DebugLog;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
+import com.kevin.zhihudaily.ZhihuDailyApplication;
 import com.kevin.zhihudaily.db.DataCache;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.view.DividerItemDecoration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class MainActivity extends BaseActivity {
     private NewsListAdapter newsListAdapter;
 
     private DataReadyReceiver mDataReadyReceiver;
+    private Bus mBus;
 
     /**
      * A mark for reset all list data
@@ -68,11 +70,13 @@ public class MainActivity extends BaseActivity {
 
     @Override protected void onResume() {
         super.onResume();
+        ZhihuDailyApplication.getInstance().getBus().register(this);
     }
 
     @Override protected void onStop() {
-        super.onStop();
+        ZhihuDailyApplication.getInstance().getBus().unregister(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReadyReceiver);
+        super.onStop();
     }
 
     @Override
@@ -103,7 +107,7 @@ public class MainActivity extends BaseActivity {
 
     private void setupList() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        //        rvList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         rvList.setLayoutManager(linearLayoutManager);
 
         newsListAdapter = new NewsListAdapter(this);
