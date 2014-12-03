@@ -1,6 +1,7 @@
 package com.kevin.zhihudaily.ui;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.halfbit.tinybus.Subscribe;
@@ -21,6 +23,7 @@ import com.kevin.zhihudaily.ZhihuDailyApplication;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.view.DrawerArrowDrawable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +52,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private String mTodayDateString;
     private String mIndexDate;
     private int preDays = 0;
+
+    private DrawerArrowDrawable drawerArrowDrawable;
+    private float offset;
+    private boolean flipped;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,11 +112,34 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 android.R.color.holo_red_light);
 
         setupToolbar();
+        setupDrawer();
         setupList();
     }
 
     private void setupToolbar() {
         setToolbarIcon(R.drawable.ic_ab_drawer);
+    }
+
+    private void setupDrawer() {
+        final Resources resources = getResources();
+        drawerArrowDrawable = new DrawerArrowDrawable(resources);
+        drawerArrowDrawable.setStrokeColor(resources.getColor(R.color.white));
+        setToolbarIcon(drawerArrowDrawable);
+
+        drawer.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override public void onDrawerSlide(View drawerView, float slideOffset) {
+                offset = slideOffset;
+                // Sometimes slideOffset ends up so close to but not quite 1 or 0.
+                if (slideOffset >= .995) {
+                    flipped = true;
+                    drawerArrowDrawable.setFlip(flipped);
+                } else if (slideOffset <= .005) {
+                    flipped = false;
+                    drawerArrowDrawable.setFlip(flipped);
+                }
+                drawerArrowDrawable.setParameter(offset);
+            }
+        });
     }
 
     private void setupList() {
