@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
@@ -28,18 +29,16 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private int lastAnimatedPosition = -1;
     private List<ListItem> mItemList = null;
+    private ListItem mCurrentItem;
 
-    //    private enum ItemViewType {
-    //        Section,
-    //        Item,
-    //    }
+    private OnItemClickListener mOnItemClickListener;
 
     public NewsListAdapter(Context context) {
         this.wrContext = new WeakReference<Context>(context);
         mItemList = new ArrayList<ListItem>();
     }
 
-    static class ListItem {
+    public static class ListItem {
         public static final int ITEM = 0;
         public static final int SECTION = 1;
 
@@ -102,14 +101,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void setupItemView(NewsFeedViewHolder holder, int position) {
-        //        if (position % 2 == 0) {
-        //            holder.titleTextView.setText("TITLE " + position);
-        //            if (holder.imageView != null) {
-        //                holder.imageView.setImageResource(R.drawable.ic_launcher);
-        //            }
-        //        } else {
-        //            holder.titleTextView.setText("2014.12." + position);
-        //        }
         if (mItemList == null || mItemList.size() == 0) {
             return;
         }
@@ -123,6 +114,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (url != null && !url.isEmpty()) {
                 Picasso.with(wrContext.get()).load(url).placeholder(R.drawable.spinner_76_inner_holo).fit()
                         .into(holder.imageView);
+            }
+
+            if (holder.container != null) {
+                holder.container.setOnClickListener(this);
+                holder.container.setTag(item);
             }
         } else {
             holder.titleTextView.setText(item.getSection());
@@ -185,7 +181,13 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override public void onClick(View v) {
+        if (mOnItemClickListener != null) {
+            mOnItemClickListener.onItemClick(v, (Integer) v.getTag());
+        }
+    }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mOnItemClickListener = listener;
     }
 
     private void runEnterAnimation(View view, int position) {
@@ -207,12 +209,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static class NewsFeedViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
         public TextView titleTextView;
+        public RelativeLayout container;
 
         public NewsFeedViewHolder(View view) {
             super(view);
             titleTextView = (TextView) view.findViewById(R.id.tv_title);
             imageView = (ImageView) view.findViewById(R.id.iv_thumbnai);
+            container = (RelativeLayout) view.findViewById(R.id.rl_layout);
         }
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
     }
 
 }

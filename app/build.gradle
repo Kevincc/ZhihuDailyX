@@ -43,4 +43,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.jakewharton:butterknife:5.1.2'
     compile 'de.halfbit:tinybus:2.0.+'
+    compile 'com.github.ksoichiro:android-observablescrollview:1.2.1'
 }

@@ -30,7 +30,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends BaseActivity
+        implements SwipeRefreshLayout.OnRefreshListener, NewsListAdapter.OnItemClickListener {
 
     @InjectView(R.id.rv_list)
     RecyclerView rvList;
@@ -68,15 +69,22 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         return R.layout.activity_main;
     }
 
-    @Override protected void onResume() {
-        super.onResume();
+    @Override protected void onStart() {
+        super.onStart();
         EventBus.getInstance().register(this);
     }
 
     @Override protected void onStop() {
         EventBus.getInstance().unregister(this);
-        //        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReadyReceiver);
         super.onStop();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -151,6 +159,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         rvList.setLayoutManager(linearLayoutManager);
 
         newsListAdapter = new NewsListAdapter(this);
+        newsListAdapter.setOnItemClickListener(this);
         rvList.setAdapter(newsListAdapter);
         rvList.setOnScrollListener(mOnScrollListener);
 
@@ -306,7 +315,18 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            
+
         }
     };
+
+    @Override public void onItemClick(View view, int position) {
+        NewsListAdapter.ListItem item = (NewsListAdapter.ListItem) view.getTag();
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(Constants.EXTRA_NEWS_NUM, item.getSectionSize());
+        intent.putExtra(Constants.EXTRA_NEWS_INDEX, item.getIndexOfDay());
+        intent.putExtra(Constants.EXTRA_NEWS_DATE, item.getDate());
+        DebugLog.d("==index=" + item.getIndexOfDay() + "==pos=" + position);
+
+        startActivity(intent);
+    }
 }

@@ -8,11 +8,12 @@
                                     android:layout_margin="@dimen/cardview_item_margin"
                                     card_view:cardCornerRadius="@dimen/cardview_item_radius">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/list_padding_left"
-                    android:paddingRight="@dimen/list_padding_right">
+    <RelativeLayout
+            android:id="@+id/rl_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/list_padding_left"
+            android:paddingRight="@dimen/list_padding_right">
         <ImageView
                 android:id="@+id/iv_thumbnai"
                 android:layout_width="wrap_content"
