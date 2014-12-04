@@ -96,7 +96,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
-            drawer.openDrawer(Gravity.START);
+            if (drawer.isDrawerOpen(Gravity.START)) {
+                drawer.closeDrawers();
+            } else {
+                drawer.openDrawer(Gravity.START);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
