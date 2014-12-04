@@ -3,7 +3,6 @@ package com.kevin.zhihudaily.ui;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -153,12 +152,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         newsListAdapter = new NewsListAdapter(this);
         rvList.setAdapter(newsListAdapter);
+        rvList.setOnScrollListener(mOnScrollListener);
 
-        //        mDataReadyReceiver = new DataReadyReceiver();
-        //        IntentFilter dataIntentFilter = new IntentFilter(Constants.Action.ACTION_NOTIFY_NEWS_LIST_UI.toString());
-        //        dataIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        //        LocalBroadcastManager.getInstance(this).registerReceiver(mDataReadyReceiver, dataIntentFilter);
+        requestLastestNews();
+    }
 
+    private void requestLastestNews() {
         Calendar calendar = Calendar.getInstance();
         mTodayDate = calendar.getTime();
 
@@ -196,7 +195,18 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         }
     }
 
+    private void requestNextDayNews() {
+        String date = mIndexDate;
+
+        DebugLog.d("==preDate==" + date);
+        requestNewsList(date, false);
+        preDays++;
+    }
+
     @Subscribe public void onNewsReadyEvent(DailyNewsModel model) {
+        // Set SwipeRefreshLayout to stop
+        mSwipeLayout.setRefreshing(false);
+
         if (model == null) {
             return;
         }
@@ -208,9 +218,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void updateNewsList(DailyNewsModel model) {
-
-        // Set SwipeRefreshLayout to stop
-        //        mSwipeRefreshLayout.setRefreshing(false);
 
         // Hide Loading footer view
         //        mFooterView.setVisibility(View.GONE);
@@ -267,11 +274,34 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     @Override public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeLayout.setRefreshing(false);
-            }
-        }, 3000);
+        //        new Handler().postDelayed(new Runnable() {
+        //            @Override
+        //            public void run() {
+        //                mSwipeLayout.setRefreshing(false);
+        //            }
+        //        }, 3000);
+        mIsResetList = true;
+        requestNewsList(mTodayDateString, true);
     }
+
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                int lastPosition;
+                final int childCount = recyclerView.getChildCount();
+                final int itemSize = recyclerView.getAdapter().getItemCount();
+                if (childCount == 0) {
+                    lastPosition = 0;
+                } else {
+                    lastPosition = recyclerView.getChildPosition(recyclerView.getChildAt(childCount - 1));
+                }
+                //                DebugLog.d(
+                //                        "childcount = " + childCount + "  lastposition = " + lastPosition + "  itemSize = " + itemSize);
+                if (lastPosition == (itemSize - 1)) {
+                    requestNextDayNews();
+                }
+            }
+        }
+    };
 }
