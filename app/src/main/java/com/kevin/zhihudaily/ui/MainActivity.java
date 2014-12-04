@@ -16,9 +16,9 @@ import butterknife.InjectView;
 import com.halfbit.tinybus.Subscribe;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.DebugLog;
+import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
-import com.kevin.zhihudaily.ZhihuDailyApplication;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
@@ -70,11 +70,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override protected void onResume() {
         super.onResume();
-        ZhihuDailyApplication.getInstance().getBus().register(this);
+        EventBus.getInstance().register(this);
     }
 
     @Override protected void onStop() {
-        ZhihuDailyApplication.getInstance().getBus().unregister(this);
+        EventBus.getInstance().unregister(this);
         //        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReadyReceiver);
         super.onStop();
     }
@@ -302,6 +302,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     requestNextDayNews();
                 }
             }
+        }
+
+        @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            
         }
     };
 }

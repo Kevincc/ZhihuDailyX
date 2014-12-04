@@ -2,7 +2,6 @@ package com.kevin.zhihudaily;
 
 import android.app.Application;
 import android.os.SystemClock;
-import com.halfbit.tinybus.TinyBus;
 import com.kevin.zhihudaily.db.DataBaseManager;
 import com.kevin.zhihudaily.db.DataCache;
 
@@ -14,8 +13,6 @@ public class ZhihuDailyApplication extends Application {
 
     private long mStatTime;
 
-    private TinyBus mBus;
-
     @Override
     public void onCreate() {
         // TODO Auto-generated method stub
@@ -26,9 +23,6 @@ public class ZhihuDailyApplication extends Application {
         //        Utils.enableStrictMode();
 
         mInstance = this;
-
-        // init tinybus
-        mBus = TinyBus.from(this);
 
         // init database
         DataBaseManager.newInstance(this);
@@ -50,7 +44,4 @@ public class ZhihuDailyApplication extends Application {
         return mInstance;
     }
 
-    public TinyBus getBus() {
-        return mBus;
-    }
 }

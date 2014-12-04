@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.Constants.Action;
 import com.kevin.zhihudaily.DebugLog;
-import com.kevin.zhihudaily.ZhihuDailyApplication;
+import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.http.ZhihuRequest;
 import com.kevin.zhihudaily.model.CommentsModel;
 import com.kevin.zhihudaily.model.DailyNewsModel;
@@ -51,13 +51,13 @@ public class DataService extends IntentService {
         DataBaseManager.getInstance().executeQuery(new QueryExecutor() {
             @Override public void run(SQLiteDatabase database) {
                 dao = new NewsDao(database);
-                executeDBAction(paraIntent);
+                executeAction(paraIntent);
             }
         });
 
     }
 
-    private void executeDBAction(Intent intent) {
+    private void executeAction(Intent intent) {
         String action = intent.getAction();
         Action actionType = Action.ACTION_NONE;
         try {
@@ -98,6 +98,7 @@ public class DataService extends IntentService {
 
                 // notify ui to update
                 //                mBroadcastNotifier.notifyDailyNewsDataReady(date);
+                EventBus.getInstance().post(dailyNewsModel);
             }
             break;
         case ACTION_READ_LASTEST_NEWS:
@@ -108,6 +109,7 @@ public class DataService extends IntentService {
 
                 // notify ui to update
                 //                mBroadcastNotifier.notifyDailyNewsDataReady(lastestNewsModel.getDate());
+                EventBus.getInstance().post(lastestNewsModel);
             }
             break;
         case ACTION_READ_NEWS_DEATIL:
@@ -122,6 +124,7 @@ public class DataService extends IntentService {
 
                 // Notify ui to update
                 //                mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
+                EventBus.getInstance().post(model);
             }
             break;
         case ACTION_GET_TODAY_NEWS:
@@ -163,7 +166,7 @@ public class DataService extends IntentService {
                     }
 
                     // notify ui to update
-                    ZhihuDailyApplication.getInstance().getBus().post(model);
+                    EventBus.getInstance().post(model);
                 }
 
             }
@@ -180,7 +183,7 @@ public class DataService extends IntentService {
         DailyNewsModel model = ZhihuRequest.getRequestService().getDailyNewsByDate(date);
         if (model != null) {
             // notify ui to update
-            ZhihuDailyApplication.getInstance().getBus().post(model);
+            EventBus.getInstance().post(model);
         }
     }
 
@@ -192,6 +195,7 @@ public class DataService extends IntentService {
 
             // Notify ui to update
             //            mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
+            EventBus.getInstance().post(model);
         }
     }
 
@@ -264,6 +268,7 @@ public class DataService extends IntentService {
 
         // notify ui to update
         //        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_LONG);
+        EventBus.getInstance().post(model);
     }
 
     private void requestShortComments(int id) {
@@ -274,6 +279,7 @@ public class DataService extends IntentService {
 
         // notify ui to update
         //        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_SHORT);
+        EventBus.getInstance().post(model);
     }
 
 }
