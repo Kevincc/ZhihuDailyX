@@ -1,6 +1,6 @@
 package com.kevin.zhihudaily.ui;
 
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,8 +10,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.DebugLog;
+import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.db.DataCache;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
 import com.kevin.zhihudaily.view.DepthPageTransformer;
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by chenchao04 on 2014-12-04.
  */
-public class DetailActivity extends BaseActivity {
+public class DetailActivity extends BaseActivity implements DetailFragment.OnFragmentInteractionListener {
     private static final String DATE_KEY = "date_key";
 
     @InjectView(R.id.pager)
@@ -39,8 +39,16 @@ public class DetailActivity extends BaseActivity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // parse bundle
-        parseBundle(savedInstanceState);
+        // restore saved state
+        if (savedInstanceState != null) {
+            handleSavedInstanceState(savedInstanceState);
+        }
+
+        // handle intent extras
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            handleExtras(extras);
+        }
 
         // init views
         initViews();
@@ -52,9 +60,11 @@ public class DetailActivity extends BaseActivity {
 
     @Override protected void onStart() {
         super.onStart();
+        EventBus.getInstance().register(this);
     }
 
     @Override protected void onStop() {
+        EventBus.getInstance().unregister(this);
         super.onStop();
     }
 
@@ -77,25 +87,23 @@ public class DetailActivity extends BaseActivity {
         setupViewPager();
     }
 
-    private void parseBundle(Bundle bundle) {
-        Intent intent = getIntent();
-        mDateKey = intent.getStringExtra(Constants.EXTRA_NEWS_DATE);
-        if (intent != null) {
-            mNewsNum = intent.getIntExtra(Constants.EXTRA_NEWS_NUM, 1);
-            mSelectModel.setId(intent.getIntExtra(Constants.EXTRA_NEWS_ID, -1));
-            mSelectModel.setTitle(intent.getStringExtra(Constants.EXTRA_NEWS_TITLE));
-            mSelectModel.setUrl(intent.getStringExtra(Constants.EXTRA_NEWS_URL));
-            mSelectModel.setImage_source(intent.getStringExtra(Constants.EXTRA_NEWS_IMAGE_SOURCE));
-            mSelectModel.setImage(intent.getStringExtra(Constants.EXTRA_NEWS_IMAGE_URL));
-        }
+    private void handleSavedInstanceState(Bundle savedInstanceState) {
+        mDateKey = savedInstanceState.getString(DATE_KEY);
+    }
 
-        if (bundle != null) {
-            mDateKey = bundle.getString(DATE_KEY);
-        }
-
+    private void handleExtras(Bundle extras) {
+        mDateKey = extras.getString(Constants.EXTRA_NEWS_DATE);
+        mNewsNum = extras.getInt(Constants.EXTRA_NEWS_NUM, 1);
+        mSelectModel.setId(extras.getInt(Constants.EXTRA_NEWS_ID, -1));
+        mSelectModel.setTitle(extras.getString(Constants.EXTRA_NEWS_TITLE));
+        mSelectModel.setUrl(extras.getString(Constants.EXTRA_NEWS_URL));
+        mSelectModel.setImage_source(extras.getString(Constants.EXTRA_NEWS_IMAGE_SOURCE));
+        mSelectModel.setImage(extras.getString(Constants.EXTRA_NEWS_IMAGE_URL));
+        mDailyNewsModel = extras.getParcelable(Constants.EXTRA_DAILY_NEWS_MODEL);
         // Read from cache for viewpager data
-        mDailyNewsModel = DataCache.getInstance().getDailyNewsModel(mDateKey);
-        mNewsNum = mDailyNewsModel.getNewsList().size();
+        if (mDailyNewsModel != null) {
+            mNewsNum = mDailyNewsModel.getNewsList().size();
+        }
     }
 
     private void setupViewPager() {
@@ -140,6 +148,10 @@ public class DetailActivity extends BaseActivity {
         return index;
     }
 
+    @Override public void onFragmentInteraction(Uri uri) {
+
+    }
+
     private class DetailPagerAdapter extends FragmentStatePagerAdapter {
 
         private final int mSize;
@@ -171,11 +183,11 @@ public class DetailActivity extends BaseActivity {
         public void onPageSelected(int position) {
             // TODO Auto-generated method stub
             NewsModel model = mDailyNewsModel.getNewsList().get(position);
-            String curTitle = getActionBar().getTitle().toString();
-            if (!curTitle.equals("")) {
-                getActionBar().setTitle(model.getTitle());
-                mCurPosition = position;
-            }
+            //            String curTitle = getToolbar().getTitle().toString();
+            //            if (!curTitle.equals("")) {
+            //                getToolbar().setTitle(model.getTitle());
+            //                mCurPosition = position;
+            //            }
         }
 
         @Override

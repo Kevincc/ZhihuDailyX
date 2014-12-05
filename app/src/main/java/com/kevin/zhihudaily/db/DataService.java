@@ -103,7 +103,7 @@ public class DataService extends IntentService {
             break;
         case ACTION_READ_LASTEST_NEWS:
             DailyNewsModel lastestNewsModel = dao.readLastestNewsList();
-            DebugLog.e("==Model size==" + lastestNewsModel.toString());
+            DebugLog.e("==Model size==" + lastestNewsModel.getNewsList().size());
             if (lastestNewsModel != null) {
                 DataCache.getInstance().addDailyCache(lastestNewsModel.getDate(), lastestNewsModel);
 
@@ -191,7 +191,7 @@ public class DataService extends IntentService {
         NewsModel model = ZhihuRequest.getRequestService().getNewsById(id);
         //        Log.d(TAG, "==ModelBody=" + model.getBody());
         if (model != null) {
-            DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
+            //            DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
 
             // Notify ui to update
             //            mBroadcastNotifier.notifyNewsBodyDataReady(date, id);

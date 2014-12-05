@@ -16,8 +16,12 @@ import com.kevin.zhihudaily.model.NewsModel;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by chenchao04 on 2014-12-01.
@@ -182,7 +186,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override public void onClick(View v) {
         if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(v, (Integer) v.getTag());
+            mOnItemClickListener.onItemClick(v, (ListItem) v.getTag());
         }
     }
 
@@ -220,7 +224,50 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
+        public void onItemClick(View view, ListItem item);
     }
 
+    public DailyNewsModel getDailyNewsModelByDate(String date) {
+        if (date == null) {
+            return null;
+        }
+        DailyNewsModel model = new DailyNewsModel();
+        model.setDisplay_date(date);
+        model.setIs_today(isToday(date));
+
+        int matchCount = 0;
+        for (ListItem item : mItemList) {
+            if (date.equals(item.getDate())) {
+                NewsModel newsModel = item.getModel();
+                if (newsModel != null) {
+                    model.getNewsList().add(newsModel);
+                    if (newsModel.isIs_top_story() == 1) {
+                        model.getTopStories().add(newsModel);
+                    }
+                }
+                matchCount++;
+            } else {
+                // Break the loop when dailynewsmodel already picked up
+                if (matchCount != 0) {
+                    break;
+                }
+            }
+        }
+        return model;
+    }
+
+    private boolean isToday(String date) {
+        Calendar calendar = Calendar.getInstance();
+        Date today = calendar.getTime();
+
+        // request latest news
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        String todayDate = formatter.format(today);
+
+        if (todayDate.equals(date)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

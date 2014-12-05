@@ -24,7 +24,9 @@ import butterknife.InjectView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.halfbit.tinybus.Subscribe;
 import com.kevin.zhihudaily.Constants;
+import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
@@ -49,13 +51,16 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     private static final String ARG_PARAM2 = "param2";
 
     private static final float MAX_TEXT_SCALE_DELTA = 0.3f;
-    private static final boolean TOOLBAR_IS_STICKY = false;
+    private static final boolean TOOLBAR_IS_STICKY = true;
 
     //  types of parameters
     private NewsModel mNewsModel;
 
-    private View mToolbar;
+    @InjectView(R.id.tb_toolbar)
+    View mToolbar;
+
     private View mRootView;
+
     @InjectView(R.id.progressBar)
     ProgressBar mProgressBar;
 
@@ -71,7 +76,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     @InjectView(R.id.overlay)
     View mOverlayView;
 
-    private TextView mSourceTextView;
+    //    private TextView mSourceTextView;
     @InjectView(R.id.wv_webview)
     ExWebView mWebView;
 
@@ -167,9 +172,11 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
 
     @Override public void onStart() {
         super.onStart();
+        EventBus.getInstance().register(this);
     }
 
     @Override public void onStop() {
+        EventBus.getInstance().unregister(this);
         super.onStop();
     }
 
@@ -190,7 +197,6 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         if (mRootView == null) {
             return;
         }
-        mToolbar = ((DetailActivity) getActivity()).getToolbar();
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
         mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
         mActionBarSize = getActionBarSize();
@@ -250,7 +256,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         }
 
         mTitleView.setText(mNewsModel.getTitle());
-        mSourceTextView.setText(mNewsModel.getImage_source());
+        //        mSourceTextView.setText(mNewsModel.getImage_source());
 
         mProgressBar.setVisibility(View.VISIBLE);
         mWebView.setVisibility(View.GONE);
@@ -342,10 +348,10 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         String body = mNewsModel.getBody();
         if (body != null) {
             updateWebView(body);
-            String imageSource = mNewsModel.getImage_source();
-            if (imageSource != null) {
-                mSourceTextView.setText(imageSource);
-            }
+            //            String imageSource = mNewsModel.getImage_source();
+            //            if (imageSource != null) {
+            //                mSourceTextView.setText(imageSource);
+            //            }
         } else {
             if (Utils.isNetworkConnected(getActivity())) {
                 //                requestNewsDetail();
@@ -374,6 +380,26 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmldata, "text/html", "UTF-8", null);
     }
 
+    @Subscribe
+    public void onNewsDetailReadyEvent(NewsModel model) {
+        if (model != null && model.getId() == mNewsModel.getId()) {
+            if (model != null) {
+                // Update ui
+                String body = model.getBody();
+                mNewsModel.setBody(model.getBody());
+                updateWebView(body);
+
+                // update image source
+                String imageSource = model.getImage_source();
+                mNewsModel.setImage_source(imageSource);
+                //                if (imageSource != null) {
+                //                    mSourceTextView.setText(imageSource);
+                //                }
+            }
+
+        }
+    }
+
     private class ExWebViewClient extends WebViewClient {
 
         @Override
@@ -383,6 +409,5 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
             mProgressBar.setVisibility(View.GONE);
             mWebView.setVisibility(View.VISIBLE);
         }
-
     }
 }

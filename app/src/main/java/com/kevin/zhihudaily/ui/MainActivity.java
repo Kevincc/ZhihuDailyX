@@ -1,5 +1,7 @@
 package com.kevin.zhihudaily.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +35,8 @@ import java.util.Locale;
 
 public class MainActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener, NewsListAdapter.OnItemClickListener {
+    private static final int ANIM_DURATION_TOOLBAR = 300;
+    private static final int ANIM_DURATION_FAB = 400;
 
     @InjectView(R.id.rv_list)
     RecyclerView rvList;
@@ -41,6 +46,9 @@ public class MainActivity extends BaseActivity
 
     @InjectView(R.id.swipe_container)
     SwipeRefreshLayout mSwipeLayout;
+
+    Toolbar mToolbar;
+    MenuItem mMenuItem;
 
     private NewsListAdapter newsListAdapter;
 
@@ -115,6 +123,8 @@ public class MainActivity extends BaseActivity
 
     private void initViews() {
         ButterKnife.inject(this);
+
+        mToolbar = getToolbar();
         drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
 
         mSwipeLayout.setOnRefreshListener(this);
@@ -163,7 +173,8 @@ public class MainActivity extends BaseActivity
         rvList.setAdapter(newsListAdapter);
         rvList.setOnScrollListener(mOnScrollListener);
 
-        requestLastestNews();
+        startIntroAnimation();
+        //        requestLastestNews();
     }
 
     private void requestLastestNews() {
@@ -227,10 +238,6 @@ public class MainActivity extends BaseActivity
     }
 
     private void updateNewsList(DailyNewsModel model) {
-
-        // Hide Loading footer view
-        //        mFooterView.setVisibility(View.GONE);
-
         // Add date to each news model
         String date = model.getDate();
         for (NewsModel news : model.getNewsList()) {
@@ -319,14 +326,61 @@ public class MainActivity extends BaseActivity
         }
     };
 
-    @Override public void onItemClick(View view, int position) {
-        NewsListAdapter.ListItem item = (NewsListAdapter.ListItem) view.getTag();
+    @Override public void onItemClick(View view, NewsListAdapter.ListItem item) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(Constants.EXTRA_NEWS_NUM, item.getSectionSize());
         intent.putExtra(Constants.EXTRA_NEWS_INDEX, item.getIndexOfDay());
         intent.putExtra(Constants.EXTRA_NEWS_DATE, item.getDate());
-        DebugLog.d("==index=" + item.getIndexOfDay() + "==pos=" + position);
+        intent.putExtra(Constants.EXTRA_DAILY_NEWS_MODEL, newsListAdapter.getDailyNewsModelByDate(item.getDate()));
+        DebugLog.d("==index=" + item.getIndexOfDay() + "==pos=" + item.getIndexOfDay());
 
         startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    private void startIntroAnimation() {
+        //        btnCreate.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.btn_fab_size));
+
+        int actionbarSize = Utils.dpToPx(56);
+        mToolbar.setTranslationY(-actionbarSize);
+        //        ivLogo.setTranslationY(-actionbarSize);
+        //        inboxMenuItem.getActionView().setTranslationY(-actionbarSize);
+
+        mToolbar.animate()
+                .translationY(0)
+                .setDuration(ANIM_DURATION_TOOLBAR)
+                .setStartDelay(300)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        startContentAnimation();
+                    }
+                })
+                .start();
+        //        ivLogo.animate()
+        //                .translationY(0)
+        //                .setDuration(ANIM_DURATION_TOOLBAR)
+        //                .setStartDelay(400);
+        //        inboxMenuItem.getActionView().animate()
+        //                .translationY(0)
+        //                .setDuration(ANIM_DURATION_TOOLBAR)
+        //                .setStartDelay(500)
+        //                .setListener(new AnimatorListenerAdapter() {
+        //                    @Override
+        //                    public void onAnimationEnd(Animator animation) {
+        //                        startContentAnimation();
+        //                    }
+        //                })
+        //                .start();
+    }
+
+    private void startContentAnimation() {
+        //        btnCreate.animate()
+        //                .translationY(0)
+        //                .setInterpolator(new OvershootInterpolator(1.f))
+        //                .setStartDelay(300)
+        //                .setDuration(ANIM_DURATION_FAB)
+        //                .start();
+        requestLastestNews();
     }
 }

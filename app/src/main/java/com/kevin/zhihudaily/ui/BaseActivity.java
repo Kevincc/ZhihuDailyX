@@ -1,6 +1,7 @@
 package com.kevin.zhihudaily.ui;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,18 +38,9 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
-
-
-    protected CharSequence getToolbarTitle() {
+    protected void setToolbarIcon(Drawable drawable) {
         if (toolbar != null) {
-            return toolbar.getTitle();
-        }
-        return null;
-    }
-
-    protected void setToolbarBackgroundColor(int color) {
-        if (toolbar != null) {
-            toolbar.setBackgroundColor(color);
+            toolbar.setNavigationIcon(drawable);
         }
     }
 }

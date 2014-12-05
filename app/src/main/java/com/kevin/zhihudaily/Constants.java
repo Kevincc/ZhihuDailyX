@@ -81,6 +81,7 @@ public class Constants {
     public static final String EXTRA_NEWS_IMAGE_SOURCE = "news_image_source";
     public static final String EXTRA_NEWS_IMAGE_URL = "news_image_url";
     public static final String EXTRA_NEWS_BODY = "news_body";
+    public static final String EXTRA_DAILY_NEWS_MODEL = "daily_news_model";
 
     // Defines a custom Intent action
     //    public static final String ACTION_BROADCAST = "com.kevin.zhihudaily.BROADCAST";
