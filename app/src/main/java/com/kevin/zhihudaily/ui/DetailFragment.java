@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.baidu.mobstat.StatService;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -182,6 +183,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
 
     @Override public void onResume() {
         super.onResume();
+        StatService.onResume(this);
     }
 
     @Override public void onPause() {

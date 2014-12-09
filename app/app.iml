@@ -93,5 +93,6 @@
     <orderEntry type="library" exported="" name="butterknife-5.1.2" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.2" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.2" level="project" />
+    <orderEntry type="library" name="android_api_3_4" level="project" />
   </component>
 </module>
