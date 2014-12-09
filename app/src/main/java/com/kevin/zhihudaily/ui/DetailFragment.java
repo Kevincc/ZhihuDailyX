@@ -188,6 +188,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
 
     @Override public void onPause() {
         super.onPause();
+        StatService.onPause(this);
     }
 
     @Override public void onDestroyView() {

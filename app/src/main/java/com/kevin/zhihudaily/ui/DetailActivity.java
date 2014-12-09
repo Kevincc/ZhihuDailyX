@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.baidu.mobstat.StatService;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.DebugLog;
 import com.kevin.zhihudaily.EventBus;
@@ -28,6 +30,7 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
     @InjectView(R.id.pager)
     ViewPager mPager;
 
+    Toolbar mToolbar;
     private DetailPagerAdapter mAdapter;
     private DailyNewsModel mDailyNewsModel;
     private NewsModel mSelectModel = new NewsModel();
@@ -70,10 +73,12 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
 
     @Override protected void onResume() {
         super.onResume();
+        StatService.onResume(this);
     }
 
     @Override protected void onPause() {
         super.onPause();
+        StatService.onPause(this);
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
@@ -84,6 +89,7 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
     private void initViews() {
         ButterKnife.inject(this);
 
+        setupToolbar();
         setupViewPager();
     }
 
@@ -104,6 +110,11 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
         if (mDailyNewsModel != null) {
             mNewsNum = mDailyNewsModel.getNewsList().size();
         }
+    }
+
+    private void setupToolbar() {
+        mToolbar = getToolbar();
+        mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
     }
 
     private void setupViewPager() {

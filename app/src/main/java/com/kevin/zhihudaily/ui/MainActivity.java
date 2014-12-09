@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.baidu.mobstat.StatService;
 import com.halfbit.tinybus.Subscribe;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.DebugLog;
@@ -42,12 +44,13 @@ public class MainActivity extends BaseActivity
     RecyclerView rvList;
 
     @InjectView(R.id.drawer)
-    DrawerLayout drawer;
+    DrawerLayout mDrawerLayout;
 
     @InjectView(R.id.swipe_container)
     SwipeRefreshLayout mSwipeLayout;
 
     Toolbar mToolbar;
+    ActionBarDrawerToggle mDrawerToggle;
     MenuItem mMenuItem;
 
     private NewsListAdapter newsListAdapter;
@@ -89,10 +92,12 @@ public class MainActivity extends BaseActivity
 
     @Override protected void onResume() {
         super.onResume();
+        StatService.onResume(this);
     }
 
     @Override protected void onPause() {
         super.onPause();
+        StatService.onPause(this);
     }
 
     @Override
@@ -111,10 +116,10 @@ public class MainActivity extends BaseActivity
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
-            if (drawer.isDrawerOpen(Gravity.START)) {
-                drawer.closeDrawers();
+            if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                mDrawerLayout.closeDrawers();
             } else {
-                drawer.openDrawer(Gravity.START);
+                mDrawerLayout.openDrawer(Gravity.START);
             }
             return true;
         }
@@ -125,7 +130,7 @@ public class MainActivity extends BaseActivity
         ButterKnife.inject(this);
 
         mToolbar = getToolbar();
-        drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
 
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -147,20 +152,25 @@ public class MainActivity extends BaseActivity
         drawerArrowDrawable.setStrokeColor(resources.getColor(R.color.white));
         setToolbarIcon(drawerArrowDrawable);
 
-        drawer.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-            @Override public void onDrawerSlide(View drawerView, float slideOffset) {
-                offset = slideOffset;
-                // Sometimes slideOffset ends up so close to but not quite 1 or 0.
-                if (slideOffset >= .995) {
-                    flipped = true;
-                    drawerArrowDrawable.setFlip(flipped);
-                } else if (slideOffset <= .005) {
-                    flipped = false;
-                    drawerArrowDrawable.setFlip(flipped);
-                }
-                drawerArrowDrawable.setParameter(offset);
-            }
-        });
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open,
+                R.string.drawer_close);
+        mDrawerToggle.syncState();
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+//        mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+        //            @Override public void onDrawerSlide(View drawerView, float slideOffset) {
+        //                offset = slideOffset;
+        //                // Sometimes slideOffset ends up so close to but not quite 1 or 0.
+        //                if (slideOffset >= .995) {
+        //                    flipped = true;
+        //                    drawerArrowDrawable.setFlip(flipped);
+        //                } else if (slideOffset <= .005) {
+        //                    flipped = false;
+        //                    drawerArrowDrawable.setFlip(flipped);
+        //                }
+        //                drawerArrowDrawable.setParameter(offset);
+        //            }
+        //        });
     }
 
     private void setupList() {
