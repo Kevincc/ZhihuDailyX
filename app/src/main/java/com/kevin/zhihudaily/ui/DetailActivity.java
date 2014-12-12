@@ -16,7 +16,6 @@ import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.view.DepthPageTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +128,7 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
 
         // Set animation
         //        mPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        mPager.setPageTransformer(true, new DepthPageTransformer());
+        //        mPager.setPageTransformer(true, new DepthPageTransformer());
 
         // Set the current item based on the extra passed in to this activity
         int extraCurrentItem = getIntent().getIntExtra(Constants.EXTRA_NEWS_INDEX, -1);

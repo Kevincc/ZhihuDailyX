@@ -27,6 +27,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.halfbit.tinybus.Subscribe;
 import com.kevin.zhihudaily.Constants;
+import com.kevin.zhihudaily.DebugLog;
 import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
@@ -82,9 +83,9 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     ExWebView mWebView;
 
     private int mActionBarSize;
-    private int mFlexibleSpaceShowFabOffset;
     private int mFlexibleSpaceImageHeight;
     private int mToolbarColor;
+    private int mTitleViewHeight;
 
     private OnFragmentInteractionListener mListener;
 
@@ -114,6 +115,19 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         if (getArguments() != null) {
             mNewsModel = getArguments().getParcelable(ARG_NEWW_MODEL);
         }
+        ViewTreeObserver vto = mTitleView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    mTitleView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    mTitleView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                if (mTitleView != null) {
+                    mTitleViewHeight = mTitleView.getHeight();
+                }
+            }
+        });
     }
 
     @Override
@@ -201,13 +215,14 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
             return;
         }
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
-        //        mFlexibleSpaceShowFabOffset = getResources().getDimensionPixelSize(R.dimen.flexible_space_show_fab_offset);
         mActionBarSize = getActionBarSize();
         mToolbarColor = getResources().getColor(R.color.colorPrimary);
 
-        if (!TOOLBAR_IS_STICKY) {
-            mToolbar.setBackgroundColor(Color.TRANSPARENT);
-        }
+        //        if (!TOOLBAR_IS_STICKY) {
+        //            mToolbar.setBackgroundColor(Color.TRANSPARENT);
+        //        }
+        mToolbar.setBackgroundColor(Color.TRANSPARENT);
+
         mScrollView.setScrollViewCallbacks(this);
         mTitleView.setText(getActivity().getTitle());
         getActivity().setTitle(null);
@@ -221,8 +236,10 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
                 } else {
                     mScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                mScrollView.scrollTo(0, mFlexibleSpaceImageHeight - mActionBarSize);
+                //                                mScrollView.scrollTo(0, mFlexibleSpaceImageHeight - mActionBarSize);
+                mScrollView.scrollTo(0, 0);
             }
+
         });
         mProgressBar.setVisibility(View.VISIBLE);
 
@@ -259,6 +276,17 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         }
 
         mTitleView.setText(mNewsModel.getTitle());
+        // Scale title text
+        float scale = 1 + Math.max(0, MAX_TEXT_SCALE_DELTA);
+        mTitleView.setPivotX(0);
+        mTitleView.setPivotY(0);
+        mTitleView.setScaleX(scale);
+        mTitleView.setScaleY(scale);
+
+        int maxTitleTranslationY = (int) (mFlexibleSpaceImageHeight - mTitleViewHeight * scale);
+        DebugLog.d("  maxTitleY = " + maxTitleTranslationY + "  scale = " + scale + " title-H = " + mTitleView
+                .getHeight());
+        mTitleView.setTranslationY(maxTitleTranslationY);
         //        mSourceTextView.setText(mNewsModel.getImage_source());
 
         mProgressBar.setVisibility(View.VISIBLE);
@@ -287,9 +315,12 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         // Translate title text
         int maxTitleTranslationY = (int) (mFlexibleSpaceImageHeight - mTitleView.getHeight() * scale);
         int titleTranslationY = maxTitleTranslationY - scrollY;
+        DebugLog.d(" scrollY = " + scrollY + "  titleY = " + titleTranslationY + "  maxTitleY = " + maxTitleTranslationY
+                + "  scale = " + scale + " title-H = " + mTitleView.getHeight());
         if (TOOLBAR_IS_STICKY) {
             titleTranslationY = Math.max(0, titleTranslationY);
         }
+
         mTitleView.setTranslationY(titleTranslationY);
 
         if (TOOLBAR_IS_STICKY) {
