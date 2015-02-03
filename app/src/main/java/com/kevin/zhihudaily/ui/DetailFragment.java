@@ -19,8 +19,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+
 import com.baidu.mobstat.StatService;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -37,6 +36,9 @@ import com.kevin.zhihudaily.model.NewsModel;
 import com.kevin.zhihudaily.view.ExWebView;
 import com.squareup.picasso.Picasso;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -44,7 +46,6 @@ import com.squareup.picasso.Picasso;
  * to handle interaction events.
  * Use the {@link DetailFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class DetailFragment extends Fragment implements ObservableScrollViewCallbacks {
     // parameter arguments, choose names that match
@@ -115,9 +116,18 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         if (getArguments() != null) {
             mNewsModel = getArguments().getParcelable(ARG_NEWW_MODEL);
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mRootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        ButterKnife.inject(this, mRootView);
         ViewTreeObserver vto = mTitleView.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override public void onGlobalLayout() {
+            @Override
+            public void onGlobalLayout() {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                     mTitleView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 } else {
@@ -125,17 +135,11 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
                 }
                 if (mTitleView != null) {
                     mTitleViewHeight = mTitleView.getHeight();
+                    DebugLog.d("==mTitleViewHeight=" + mTitleViewHeight);
+                    mTitleView.setTranslationY(mFlexibleSpaceImageHeight - (mActionBarSize * 13 / 10));
                 }
             }
         });
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        ButterKnife.inject(this, mRootView);
         return mRootView;
     }
 
@@ -168,7 +172,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
@@ -178,34 +182,40 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         public void onFragmentInteraction(Uri uri);
     }
 
-    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // init views
         initViews();
     }
 
-    @Override public void onStart() {
+    @Override
+    public void onStart() {
         super.onStart();
         EventBus.getInstance().register(this);
     }
 
-    @Override public void onStop() {
+    @Override
+    public void onStop() {
         EventBus.getInstance().unregister(this);
         super.onStop();
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
         StatService.onResume(this);
     }
 
-    @Override public void onPause() {
+    @Override
+    public void onPause() {
         super.onPause();
         StatService.onPause(this);
     }
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         mRootView = null;
     }
@@ -236,8 +246,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
                 } else {
                     mScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                //                                mScrollView.scrollTo(0, mFlexibleSpaceImageHeight - mActionBarSize);
-                mScrollView.scrollTo(0, 0);
+                mScrollView.scrollTo(0, mFlexibleSpaceImageHeight - mActionBarSize);
             }
 
         });
@@ -295,7 +304,8 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
 
     }
 
-    @Override public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         // Translate overlay and image
         float flexibleRange = mFlexibleSpaceImageHeight - mActionBarSize;
         int minOverlayTransitionY = mActionBarSize - mOverlayView.getHeight();
@@ -340,17 +350,19 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         }
     }
 
-    @Override public void onDownMotionEvent() {
+    @Override
+    public void onDownMotionEvent() {
 
     }
 
-    @Override public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
 
     }
 
     private int getActionBarSize() {
         TypedValue typedValue = new TypedValue();
-        int[] textSizeAttr = new int[] { R.attr.actionBarSize };
+        int[] textSizeAttr = new int[]{R.attr.actionBarSize};
         int indexOfAttrTextSize = 0;
         TypedArray a = getActivity().obtainStyledAttributes(typedValue.data, textSizeAttr);
         int actionBarSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);

@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.14.2'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 apply plugin: 'com.android.application'
@@ -25,7 +25,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -42,6 +42,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.jakewharton:butterknife:5.1.2'
-    compile 'de.halfbit:tinybus:2.0.+'
+    compile 'de.halfbit:tinybus:2.1.+'
     compile 'com.github.ksoichiro:android-observablescrollview:1.2.1'
 }

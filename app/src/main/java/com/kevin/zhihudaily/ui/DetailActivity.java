@@ -7,8 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+
 import com.baidu.mobstat.StatService;
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.DebugLog;
@@ -19,6 +18,9 @@ import com.kevin.zhihudaily.model.NewsModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * Created by chenchao04 on 2014-12-04.
@@ -38,7 +40,8 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
     private int mNewsNum = 1;
     private int mCurPosition = 0;
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // restore saved state
@@ -56,31 +59,37 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
         initViews();
     }
 
-    @Override protected int getLayoutResource() {
+    @Override
+    protected int getLayoutResource() {
         return R.layout.activity_detail;
     }
 
-    @Override protected void onStart() {
+    @Override
+    protected void onStart() {
         super.onStart();
         EventBus.getInstance().register(this);
     }
 
-    @Override protected void onStop() {
+    @Override
+    protected void onStop() {
         EventBus.getInstance().unregister(this);
         super.onStop();
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
         StatService.onResume(this);
     }
 
-    @Override protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
         StatService.onPause(this);
     }
 
-    @Override protected void onSaveInstanceState(Bundle outState) {
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(DATE_KEY, mDateKey);
     }
@@ -158,7 +167,8 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
         return index;
     }
 
-    @Override public void onFragmentInteraction(Uri uri) {
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 
@@ -184,6 +194,7 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
         public Fragment getItem(int position) {
             // TODO Auto-generated method stub
             return DetailFragment.newInstance(mDailyNewsModel.getNewsList().get(position));
+//            return DetailFragmentNew.newInstance(mDailyNewsModel.getNewsList().get(position));
         }
     }
 

@@ -27,7 +27,6 @@ import com.kevin.zhihudaily.Utils;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.view.DrawerArrowDrawable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class MainActivity extends BaseActivity
     private String mIndexDate;
     private int preDays = 0;
 
-    private DrawerArrowDrawable drawerArrowDrawable;
+//    private DrawerArrowDrawable drawerArrowDrawable;
     private float offset;
     private boolean flipped;
 
@@ -148,9 +147,9 @@ public class MainActivity extends BaseActivity
 
     private void setupDrawer() {
         final Resources resources = getResources();
-        drawerArrowDrawable = new DrawerArrowDrawable(resources);
-        drawerArrowDrawable.setStrokeColor(resources.getColor(R.color.white));
-        setToolbarIcon(drawerArrowDrawable);
+//        drawerArrowDrawable = new DrawerArrowDrawable(resources);
+        //        drawerArrowDrawable.setStrokeColor(resources.getColor(R.color.white));
+        //        setToolbarIcon(drawerArrowDrawable);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open,
                 R.string.drawer_close);
