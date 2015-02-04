@@ -63,6 +63,40 @@ public class MainActivity extends BaseActivity
     private String mTodayDateString;
     private String mIndexDate;
     private int preDays = 0;
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                int lastPosition;
+                final int childCount = recyclerView.getChildCount();
+                final int itemSize = recyclerView.getAdapter().getItemCount();
+                if (childCount == 0) {
+                    lastPosition = 0;
+                } else {
+                    lastPosition = recyclerView.getChildPosition(recyclerView.getChildAt(childCount - 1));
+                }
+//                DebugLog.d("childcount = " + childCount + "  lastposition = " + lastPosition + "  itemSize = " + itemSize);
+                if (lastPosition == (itemSize - 1)) {
+                    requestNextDayNews();
+                }
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            NewsListAdapter.ListItem item = ((NewsListAdapter) recyclerView.getAdapter()).getItemByPosition(position);
+            if (item != null) {
+                DebugLog.d("== item = " + item.getSection() + "  type=" + item.getType());
+                if (item.getType() == NewsListAdapter.ListItem.SECTION) {
+                    String dateTitle = item.getSection();
+                    getToolbar().setTitle(dateTitle + "");
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -293,34 +327,6 @@ public class MainActivity extends BaseActivity
         mIsResetList = true;
         requestNewsList(mTodayDateString, true);
     }
-
-    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                int lastPosition;
-                final int childCount = recyclerView.getChildCount();
-                final int itemSize = recyclerView.getAdapter().getItemCount();
-                if (childCount == 0) {
-                    lastPosition = 0;
-                } else {
-                    lastPosition = recyclerView.getChildPosition(recyclerView.getChildAt(childCount - 1));
-                }
-                //                DebugLog.d(
-                //                        "childcount = " + childCount + "  lastposition = " + lastPosition + "  itemSize = " + itemSize);
-                if (lastPosition == (itemSize - 1)) {
-                    requestNextDayNews();
-                }
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-        }
-    };
 
     @Override
     public void onItemClick(View view, NewsListAdapter.ListItem item) {

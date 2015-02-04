@@ -9,6 +9,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
 import com.kevin.zhihudaily.model.DailyNewsModel;
@@ -28,9 +29,8 @@ import java.util.Locale;
  */
 public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
-    private WeakReference<Context> wrContext;
     private static final int ANIMATED_ITEMS_COUNT = 2;
-
+    private WeakReference<Context> wrContext;
     private int lastAnimatedPosition = -1;
     private List<ListItem> mItemList = null;
     private ListItem mCurrentItem;
@@ -42,53 +42,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mItemList = new ArrayList<ListItem>();
     }
 
-    public static class ListItem {
-        public static final int ITEM = 0;
-        public static final int SECTION = 1;
-
-        public final int type;
-        public final String section;
-        public final int sectionSize;
-        public final NewsModel model;
-        public final int indexOfDay;
-        public final String date;
-
-        public ListItem(int type, NewsModel model, String section, int size, int index, String date) {
-            this.type = type;
-            this.model = model;
-            this.section = section;
-            this.sectionSize = size;
-            this.indexOfDay = index;
-            this.date = date;
-        }
-
-        public NewsModel getModel() {
-            return model;
-        }
-
-        public int getType() {
-            return type;
-        }
-
-        public String getSection() {
-            return section;
-        }
-
-        public int getSectionSize() {
-            return sectionSize;
-        }
-
-        public int getIndexOfDay() {
-            return indexOfDay;
-        }
-
-        public String getDate() {
-            return date;
-        }
-
-    }
-
-    @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_item, parent, false);
         if (ListItem.SECTION == viewType) {
             view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_section, parent, false);
@@ -98,7 +53,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return new NewsFeedViewHolder(view);
     }
 
-    @Override public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         runEnterAnimation(viewHolder.itemView, position);
         final NewsFeedViewHolder holder = (NewsFeedViewHolder) viewHolder;
         setupItemView(holder, position);
@@ -174,17 +130,25 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
-    @Override public int getItemCount() {
+    @Override
+    public int getItemCount() {
         return mItemList.size();
     }
 
-    @Override public int getItemViewType(int position) {
+    @Override
+    public int getItemViewType(int position) {
         //        return super.getItemViewType(position);
         ListItem item = mItemList.get(position);
         return item.getType();
     }
 
-    @Override public void onClick(View v) {
+    public ListItem getItemByPosition(int position) {
+        ListItem item = mItemList.get(position);
+        return item;
+    }
+
+    @Override
+    public void onClick(View v) {
         if (mOnItemClickListener != null) {
             mOnItemClickListener.onItemClick(v, (ListItem) v.getTag());
         }
@@ -208,23 +172,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .setDuration(700)
                     .start();
         }
-    }
-
-    public static class NewsFeedViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageView;
-        public TextView titleTextView;
-        public RelativeLayout container;
-
-        public NewsFeedViewHolder(View view) {
-            super(view);
-            titleTextView = (TextView) view.findViewById(R.id.tv_title);
-            imageView = (ImageView) view.findViewById(R.id.iv_thumbnai);
-            container = (RelativeLayout) view.findViewById(R.id.rl_layout);
-        }
-    }
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view, ListItem item);
     }
 
     public DailyNewsModel getDailyNewsModelByDate(String date) {
@@ -268,6 +215,69 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return true;
         } else {
             return false;
+        }
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view, ListItem item);
+    }
+
+    public static class ListItem {
+        public static final int ITEM = 0;
+        public static final int SECTION = 1;
+
+        public final int type;
+        public final String section;
+        public final int sectionSize;
+        public final NewsModel model;
+        public final int indexOfDay;
+        public final String date;
+
+        public ListItem(int type, NewsModel model, String section, int size, int index, String date) {
+            this.type = type;
+            this.model = model;
+            this.section = section;
+            this.sectionSize = size;
+            this.indexOfDay = index;
+            this.date = date;
+        }
+
+        public NewsModel getModel() {
+            return model;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public String getSection() {
+            return section;
+        }
+
+        public int getSectionSize() {
+            return sectionSize;
+        }
+
+        public int getIndexOfDay() {
+            return indexOfDay;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+    }
+
+    public static class NewsFeedViewHolder extends RecyclerView.ViewHolder {
+        public ImageView imageView;
+        public TextView titleTextView;
+        public RelativeLayout container;
+
+        public NewsFeedViewHolder(View view) {
+            super(view);
+            titleTextView = (TextView) view.findViewById(R.id.tv_title);
+            imageView = (ImageView) view.findViewById(R.id.iv_thumbnai);
+            container = (RelativeLayout) view.findViewById(R.id.rl_layout);
         }
     }
 }
