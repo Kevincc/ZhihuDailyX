@@ -19,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.mobstat.StatService;
@@ -54,7 +55,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     private static final String ARG_NEWW_MODEL = "arg_news_model";
     private static final String ARG_PARAM2 = "param2";
 
-    private static final float MAX_TEXT_SCALE_DELTA = 0.3f;
+    private static final float MAX_TEXT_SCALE_DELTA = 0.2f;
     private static final boolean TOOLBAR_IS_STICKY = true;
 
     //  types of parameters
@@ -71,8 +72,11 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     @InjectView(R.id.scroll)
     ObservableScrollView mScrollView;
 
-    @InjectView(R.id.image)
+    @InjectView(R.id.iv_image)
     ImageView mImageView;
+
+    @InjectView(R.id.rl_header)
+    RelativeLayout mHeaderView;
 
     @InjectView(R.id.title)
     TextView mTitleView;
@@ -304,8 +308,8 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         mTitleView.setTranslationY(maxTitleTranslationY);
         //        mSourceTextView.setText(mNewsModel.getImage_source());
 
-        mProgressBar.setVisibility(View.VISIBLE);
-        mWebView.setVisibility(View.GONE);
+//        mProgressBar.setVisibility(View.VISIBLE);
+//        mWebView.setVisibility(View.GONE);
         updateNewsDetail();
 
     }
@@ -316,7 +320,8 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         float flexibleRange = mFlexibleSpaceImageHeight - mActionBarSize;
         int minOverlayTransitionY = mActionBarSize - mOverlayView.getHeight();
         mOverlayView.setTranslationY(Math.max(minOverlayTransitionY, Math.min(0, -scrollY)));
-        mImageView.setTranslationY(Math.max(minOverlayTransitionY, Math.min(0, -scrollY / 2)));
+//        mImageView.setTranslationY(Math.max(minOverlayTransitionY, Math.min(0, -scrollY / 2)));
+        mHeaderView.setTranslationY(Math.max(minOverlayTransitionY, Math.min(0, -scrollY / 2)));
 
         // Change alpha of overlay
         mOverlayView.setAlpha(Math.max(0, Math.min(1, (float) scrollY / flexibleRange)));
@@ -459,13 +464,20 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     }
 
     private class ExWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+//            return super.shouldOverrideUrlLoading(view, url);
+            return false;
+        }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             // TODO Auto-generated method stub
             super.onPageFinished(view, url);
             mProgressBar.setVisibility(View.GONE);
-            mWebView.setVisibility(View.VISIBLE);
+            view.setVisibility(View.VISIBLE);
         }
     }
 }
