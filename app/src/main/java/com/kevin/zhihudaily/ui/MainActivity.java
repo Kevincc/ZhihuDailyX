@@ -3,7 +3,6 @@ package com.kevin.zhihudaily.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,8 +14,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+
 import com.baidu.mobstat.StatService;
 import com.halfbit.tinybus.Subscribe;
 import com.kevin.zhihudaily.Constants;
@@ -33,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class MainActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener, NewsListAdapter.OnItemClickListener {
@@ -63,10 +64,6 @@ public class MainActivity extends BaseActivity
     private String mIndexDate;
     private int preDays = 0;
 
-//    private DrawerArrowDrawable drawerArrowDrawable;
-    private float offset;
-    private boolean flipped;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,26 +72,31 @@ public class MainActivity extends BaseActivity
         initViews();
     }
 
-    @Override protected int getLayoutResource() {
+    @Override
+    protected int getLayoutResource() {
         return R.layout.activity_main;
     }
 
-    @Override protected void onStart() {
+    @Override
+    protected void onStart() {
         super.onStart();
         EventBus.getInstance().register(this);
     }
 
-    @Override protected void onStop() {
+    @Override
+    protected void onStop() {
         EventBus.getInstance().unregister(this);
         super.onStop();
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
         StatService.onResume(this);
     }
 
-    @Override protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
         StatService.onPause(this);
     }
@@ -146,30 +148,11 @@ public class MainActivity extends BaseActivity
     }
 
     private void setupDrawer() {
-        final Resources resources = getResources();
-//        drawerArrowDrawable = new DrawerArrowDrawable(resources);
-        //        drawerArrowDrawable.setStrokeColor(resources.getColor(R.color.white));
-        //        setToolbarIcon(drawerArrowDrawable);
-
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open,
                 R.string.drawer_close);
         mDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-//        mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-        //            @Override public void onDrawerSlide(View drawerView, float slideOffset) {
-        //                offset = slideOffset;
-        //                // Sometimes slideOffset ends up so close to but not quite 1 or 0.
-        //                if (slideOffset >= .995) {
-        //                    flipped = true;
-        //                    drawerArrowDrawable.setFlip(flipped);
-        //                } else if (slideOffset <= .005) {
-        //                    flipped = false;
-        //                    drawerArrowDrawable.setFlip(flipped);
-        //                }
-        //                drawerArrowDrawable.setParameter(offset);
-        //            }
-        //        });
     }
 
     private void setupList() {
@@ -232,7 +215,8 @@ public class MainActivity extends BaseActivity
         preDays++;
     }
 
-    @Subscribe public void onNewsReadyEvent(DailyNewsModel model) {
+    @Subscribe
+    public void onNewsReadyEvent(DailyNewsModel model) {
         // Set SwipeRefreshLayout to stop
         mSwipeLayout.setRefreshing(false);
 
@@ -298,7 +282,8 @@ public class MainActivity extends BaseActivity
         //        }
     }
 
-    @Override public void onRefresh() {
+    @Override
+    public void onRefresh() {
         //        new Handler().postDelayed(new Runnable() {
         //            @Override
         //            public void run() {
@@ -310,7 +295,8 @@ public class MainActivity extends BaseActivity
     }
 
     private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-        @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 int lastPosition;
@@ -329,13 +315,15 @@ public class MainActivity extends BaseActivity
             }
         }
 
-        @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
 
         }
     };
 
-    @Override public void onItemClick(View view, NewsListAdapter.ListItem item) {
+    @Override
+    public void onItemClick(View view, NewsListAdapter.ListItem item) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(Constants.EXTRA_NEWS_NUM, item.getSectionSize());
         intent.putExtra(Constants.EXTRA_NEWS_INDEX, item.getIndexOfDay());

@@ -169,7 +169,7 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        finish();
     }
 
     private class DetailPagerAdapter extends FragmentStatePagerAdapter {

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     private NewsModel mNewsModel;
 
     @InjectView(R.id.tb_toolbar)
-    View mToolbar;
+    Toolbar mToolbar;
 
     private View mRootView;
 
@@ -227,29 +228,34 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
         mActionBarSize = getActionBarSize();
         mToolbarColor = getResources().getColor(R.color.colorPrimary);
+        mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onButtonPressed(null);
+            }
+        });
 
-        //        if (!TOOLBAR_IS_STICKY) {
-        //            mToolbar.setBackgroundColor(Color.TRANSPARENT);
-        //        }
         mToolbar.setBackgroundColor(Color.TRANSPARENT);
+        mOverlayView.setAlpha(0);
 
         mScrollView.setScrollViewCallbacks(this);
         mTitleView.setText(getActivity().getTitle());
         getActivity().setTitle(null);
 
-        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    mScrollView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                } else {
-                    mScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-                mScrollView.scrollTo(0, mFlexibleSpaceImageHeight - mActionBarSize);
-            }
-
-        });
+//        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
+//        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+//                    mScrollView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//                } else {
+//                    mScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                }
+//                mScrollView.scrollTo(0, mFlexibleSpaceImageHeight - mActionBarSize);
+//            }
+//
+//        });
         mProgressBar.setVisibility(View.VISIBLE);
 
         // setup webview
@@ -337,8 +343,14 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
             // Change alpha of toolbar background
             if (-scrollY + mFlexibleSpaceImageHeight <= mActionBarSize) {
                 setBackgroundAlpha(mToolbar, 1, mToolbarColor);
+                mTitleView.setAlpha(0);
+                mTitleView.setVisibility(View.GONE);
+                mToolbar.setTitle(mTitleView.getText());
             } else {
                 setBackgroundAlpha(mToolbar, 0, mToolbarColor);
+                mTitleView.setAlpha(1);
+                mTitleView.setVisibility(View.VISIBLE);
+                mToolbar.setTitle("");
             }
         } else {
             // Translate Toolbar
