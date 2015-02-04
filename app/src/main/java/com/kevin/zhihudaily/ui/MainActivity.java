@@ -90,10 +90,8 @@ public class MainActivity extends BaseActivity
             NewsListAdapter.ListItem item = ((NewsListAdapter) recyclerView.getAdapter()).getItemByPosition(position);
             if (item != null) {
                 DebugLog.d("== item = " + item.getSection() + "  type=" + item.getType());
-                if (item.getType() == NewsListAdapter.ListItem.SECTION) {
-                    String dateTitle = item.getSection();
-                    getToolbar().setTitle(dateTitle + "");
-                }
+                String dateTitle = item.getSection();
+                getToolbar().setTitle(dateTitle + "");
             }
         }
     };

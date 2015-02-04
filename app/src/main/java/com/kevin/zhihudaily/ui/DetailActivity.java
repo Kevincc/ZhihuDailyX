@@ -194,7 +194,6 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
         public Fragment getItem(int position) {
             // TODO Auto-generated method stub
             return DetailFragment.newInstance(mDailyNewsModel.getNewsList().get(position));
-//            return DetailFragmentNew.newInstance(mDailyNewsModel.getNewsList().get(position));
         }
     }
 

@@ -96,7 +96,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             for (int j = 0; j < len; j++) {
                 newsList.get(j).setDate(date);
-                ListItem item = new ListItem(ListItem.ITEM, newsList.get(j), null, len, j, date);
+                ListItem item = new ListItem(ListItem.ITEM, newsList.get(j), dailyModel.getDisplay_date(), len, j, date);
                 //                Log.e(TAG, "==item[" + j + "]" + "=title=" + newsList.get(j).getTitle());
                 mItemList.add(item);
             }
