@@ -11,6 +11,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -55,7 +58,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     private static final String ARG_NEWW_MODEL = "arg_news_model";
     private static final String ARG_PARAM2 = "param2";
 
-    private static final float MAX_TEXT_SCALE_DELTA = 0.2f;
+    private static final float MAX_TEXT_SCALE_DELTA = 0.1f;
     private static final boolean TOOLBAR_IS_STICKY = true;
 
     //  types of parameters
@@ -84,7 +87,9 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     @InjectView(R.id.overlay)
     View mOverlayView;
 
-    //    private TextView mSourceTextView;
+    @InjectView(R.id.tv_news_image_source)
+    TextView mSourceTextView;
+
     @InjectView(R.id.wv_webview)
     ExWebView mWebView;
 
@@ -232,6 +237,9 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
         mActionBarSize = getActionBarSize();
         mToolbarColor = getResources().getColor(R.color.colorPrimary);
+
+        setHasOptionsMenu(true);
+        ((DetailActivity) getActivity()).setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -306,12 +314,36 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         DebugLog.d("  maxTitleY = " + maxTitleTranslationY + "  scale = " + scale + " title-H = " + mTitleView
                 .getHeight());
         mTitleView.setTranslationY(maxTitleTranslationY);
-        //        mSourceTextView.setText(mNewsModel.getImage_source());
+        mSourceTextView.setText(mNewsModel.getImage_source());
 
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        mWebView.setVisibility(View.GONE);
         updateNewsDetail();
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getActivity().getMenuInflater().inflate(R.menu.menu_detail, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_comment:
+                gotoComments();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void gotoComments() {
+        Intent intent = new Intent(getActivity(), CommentActivity.class);
+        intent.putExtra(Constants.EXTRA_NEWS_ID, mNewsModel.getId());
+        startActivity(intent);
     }
 
     @Override
@@ -411,10 +443,10 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         String body = mNewsModel.getBody();
         if (body != null) {
             updateWebView(body);
-            //            String imageSource = mNewsModel.getImage_source();
-            //            if (imageSource != null) {
-            //                mSourceTextView.setText(imageSource);
-            //            }
+            String imageSource = mNewsModel.getImage_source();
+            if (imageSource != null) {
+                mSourceTextView.setText(imageSource);
+            }
         } else {
             if (Utils.isNetworkConnected(getActivity())) {
                 //                requestNewsDetail();
@@ -455,9 +487,9 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
                 // update image source
                 String imageSource = model.getImage_source();
                 mNewsModel.setImage_source(imageSource);
-                //                if (imageSource != null) {
-                //                    mSourceTextView.setText(imageSource);
-                //                }
+                if (imageSource != null) {
+                    mSourceTextView.setText(imageSource);
+                }
             }
 
         }

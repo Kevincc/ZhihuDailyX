@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 
 import com.baidu.mobstat.StatService;
 import com.kevin.zhihudaily.Constants;
@@ -31,7 +30,7 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
     @InjectView(R.id.pager)
     ViewPager mPager;
 
-    Toolbar mToolbar;
+    //    Toolbar mToolbar;
     private DetailPagerAdapter mAdapter;
     private DailyNewsModel mDailyNewsModel;
     private NewsModel mSelectModel = new NewsModel();
@@ -121,8 +120,8 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
     }
 
     private void setupToolbar() {
-        mToolbar = getToolbar();
-        mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+//        mToolbar = getToolbar();
+//        mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
     }
 
     private void setupViewPager() {

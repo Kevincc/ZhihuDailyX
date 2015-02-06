@@ -4,9 +4,34 @@
     <string name="app_name">ZhihuDailyX</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="title_news_detail">NewsDetail</string>
+    <string name="title_settings">设置</string>
+    <string name="title_about">关于</string>
+    <string name="title_comment">评论</string>
+    <string-array name="menu_array">
+        <item>设置</item>
+        <item>关于</item>
+    </string-array>
+
+    <!-- Settings -->
+    <string name="wifi_auto_download">自动离线下载</string>
+    <string name="wifi_auto_download_summary">仅Wi-Fi下可用，自动下载最新内容</string>
+    <string name="clear_cache">清除缓存</string>
+
+    <string name="stat_event_app_live">app_live</string>
+    <string name="stat_label_app_live">应用使用时长</string>
+
+    <!-- Comment -->
+    <string name="action_share">分享</string>
+    <string name="action_comment">评论</string>
+    <string name="comment_no_comment">深度长评虚位以待</string>
+    <string name="long_comment">长评</string>
+    <string name="short_comment">短评</string>
+    <string name="network_disconnet">网络未连接</string>
+    <string name="error_argument">参数错误，无法获取评论</string>
 
 </resources>

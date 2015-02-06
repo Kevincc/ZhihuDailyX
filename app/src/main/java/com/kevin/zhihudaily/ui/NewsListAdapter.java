@@ -44,7 +44,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_item, parent, false);
+        View view = null;
         if (ListItem.SECTION == viewType) {
             view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_section, parent, false);
         } else if (ListItem.ITEM == viewType) {
@@ -142,9 +142,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return item.getType();
     }
 
-    public ListItem getItemByPosition(int position) {
-        ListItem item = mItemList.get(position);
-        return item;
+    public Object getItemByPosition(int position) {
+        return mItemList.get(position);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.kevin.zhihudaily.db;
 import android.app.IntentService;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.kevin.zhihudaily.Constants;
 import com.kevin.zhihudaily.Constants.Action;
 import com.kevin.zhihudaily.DebugLog;
@@ -49,7 +50,8 @@ public class DataService extends IntentService {
         DebugLog.d(intent.toString());
         final Intent paraIntent = intent;
         DataBaseManager.getInstance().executeQuery(new QueryExecutor() {
-            @Override public void run(SQLiteDatabase database) {
+            @Override
+            public void run(SQLiteDatabase database) {
                 dao = new NewsDao(database);
                 executeAction(paraIntent);
             }
@@ -70,83 +72,83 @@ public class DataService extends IntentService {
         int id = intent.getIntExtra(Constants.EXTRA_NEWS_ID, -1);
         String date = intent.getStringExtra(Constants.EXTRA_NEWS_DATE);
         switch (actionType) {
-        case ACTION_WRITE_DAILY_NEWS:
-            String key = intent.getStringExtra(Constants.EXTRA_CACHE_ID);
-            if (key == null) {
+            case ACTION_WRITE_DAILY_NEWS:
+                String key = intent.getStringExtra(Constants.EXTRA_CACHE_ID);
+                if (key == null) {
+                    break;
+                }
+
+                //            DailyNewsModel model = DataCache.getInstance().getDailyNewsModel(key);
+                //            DataBaseManager.getInstance().writeDailyNewsToDB(model);
+
                 break;
-            }
+            case ACTION_WRITE_NEWS_DEATIL:
+                String body = intent.getStringExtra(Constants.EXTRA_NEWS_BODY);
+                if (id == -1 || body == null) {
+                    break;
+                }
 
-            //            DailyNewsModel model = DataCache.getInstance().getDailyNewsModel(key);
-            //            DataBaseManager.getInstance().writeDailyNewsToDB(model);
-
-            break;
-        case ACTION_WRITE_NEWS_DEATIL:
-            String body = intent.getStringExtra(Constants.EXTRA_NEWS_BODY);
-            if (id == -1 || body == null) {
+                dao.updateNewsBodyToDB(id, body, null);
                 break;
-            }
+            case ACTION_READ_DAILY_NEWS:
+                if (date == null) {
+                    break;
+                }
+                DailyNewsModel dailyNewsModel = dao.readDaliyNewsList(date);
+                if (dailyNewsModel != null) {
+                    DataCache.getInstance().addDailyCache(dailyNewsModel.getDate(), dailyNewsModel);
 
-            dao.updateNewsBodyToDB(id, body, null);
-            break;
-        case ACTION_READ_DAILY_NEWS:
-            if (date == null) {
+                    // notify ui to update
+                    //                mBroadcastNotifier.notifyDailyNewsDataReady(date);
+                    EventBus.getInstance().post(dailyNewsModel);
+                }
                 break;
-            }
-            DailyNewsModel dailyNewsModel = dao.readDaliyNewsList(date);
-            if (dailyNewsModel != null) {
-                DataCache.getInstance().addDailyCache(dailyNewsModel.getDate(), dailyNewsModel);
+            case ACTION_READ_LASTEST_NEWS:
+                DailyNewsModel lastestNewsModel = dao.readLastestNewsList();
+                DebugLog.e("==Model size==" + lastestNewsModel.getNewsList().size());
+                if (lastestNewsModel != null) {
+                    DataCache.getInstance().addDailyCache(lastestNewsModel.getDate(), lastestNewsModel);
 
-                // notify ui to update
-                //                mBroadcastNotifier.notifyDailyNewsDataReady(date);
-                EventBus.getInstance().post(dailyNewsModel);
-            }
-            break;
-        case ACTION_READ_LASTEST_NEWS:
-            DailyNewsModel lastestNewsModel = dao.readLastestNewsList();
-            DebugLog.e("==Model size==" + lastestNewsModel.getNewsList().size());
-            if (lastestNewsModel != null) {
-                DataCache.getInstance().addDailyCache(lastestNewsModel.getDate(), lastestNewsModel);
-
-                // notify ui to update
-                //                mBroadcastNotifier.notifyDailyNewsDataReady(lastestNewsModel.getDate());
-                EventBus.getInstance().post(lastestNewsModel);
-            }
-            break;
-        case ACTION_READ_NEWS_DEATIL:
-            if (date == null || id == -1) {
+                    // notify ui to update
+                    //                mBroadcastNotifier.notifyDailyNewsDataReady(lastestNewsModel.getDate());
+                    EventBus.getInstance().post(lastestNewsModel);
+                }
                 break;
-            }
-            //            String news_body = DataBaseManager.getInstance().readNewsBody(news_id);
-            NewsModel model = dao.readNewsBodyAndImageSource(id);
-            if (model != null) {
-                // Update to db
-                DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
+            case ACTION_READ_NEWS_DEATIL:
+                if (date == null || id == -1) {
+                    break;
+                }
+                //            String news_body = DataBaseManager.getInstance().readNewsBody(news_id);
+                NewsModel model = dao.readNewsBodyAndImageSource(id);
+                if (model != null) {
+                    // Update to db
+                    DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
 
-                // Notify ui to update
-                //                mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
-                EventBus.getInstance().post(model);
-            }
-            break;
-        case ACTION_GET_TODAY_NEWS:
-            requestTodayNews();
-            break;
-        case ACTION_GET_DAILY_NEWS:
-            requestDailyNewsByDate(date);
-            break;
-        case ACTION_GET_NEWS_DETAIL:
-            requestNewsDetail(date, id);
-            break;
-        case ACTION_START_OFFLINE_DOWNLOAD:
-            startOfflineDownload(date);
-            break;
-        case ACTION_GET_LONG_COMMENTS:
-            requestLongComments(id);
-            break;
-        case ACTION_GET_SHORT_COMMENTS:
-            requestShortComments(id);
-            break;
-        default:
-            break;
+                    // Notify ui to update
+                    //                mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
+                    EventBus.getInstance().post(model);
+                }
+                break;
+            case ACTION_GET_TODAY_NEWS:
+                requestTodayNews();
+                break;
+            case ACTION_GET_DAILY_NEWS:
+                requestDailyNewsByDate(date);
+                break;
+            case ACTION_GET_NEWS_DETAIL:
+                requestNewsDetail(date, id);
+                break;
+            case ACTION_START_OFFLINE_DOWNLOAD:
+                startOfflineDownload(date);
+                break;
+            case ACTION_GET_LONG_COMMENTS:
+                requestLongComments(id);
+                break;
+            case ACTION_GET_SHORT_COMMENTS:
+                requestShortComments(id);
+                break;
+            default:
+                break;
         }
     }
 
@@ -263,22 +265,16 @@ public class DataService extends IntentService {
     private void requestLongComments(int id) {
         DebugLog.d("lid = " + id);
         CommentsModel model = ZhihuRequest.getRequestService().getLongCommentsById(id);
+        model.setComments_type(Constants.COMMENT_TYPE_LONG);
 
-        DataCache.getInstance().addCommentsCache(id, model);
-
-        // notify ui to update
-        //        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_LONG);
         EventBus.getInstance().post(model);
     }
 
     private void requestShortComments(int id) {
         DebugLog.d("sid = " + id);
         CommentsModel model = ZhihuRequest.getRequestService().getShortCommentsById(id);
+        model.setComments_type(Constants.COMMENT_TYPE_SHORT);
 
-        DataCache.getInstance().addCommentsCache(id, model);
-
-        // notify ui to update
-        //        mBroadcastNotifier.notifyCommentDataReady(id, Constants.COMMENT_TYPE_SHORT);
         EventBus.getInstance().post(model);
     }
 

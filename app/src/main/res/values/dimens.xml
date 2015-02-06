@@ -34,7 +34,12 @@
     <dimen name="tab_height">48dp</dimen>
 
     <dimen name="detail_header_image_height">250dp</dimen>
-    <dimen name="detail_header_image_margin_left">7dp</dimen>
-    <dimen name="detail_header_image_margin_right">7dp</dimen>
+    <dimen name="detail_header_image_margin_left">3dp</dimen>
+    <dimen name="detail_header_image_margin_right">3dp</dimen>
     <dimen name="detail_header_image_margin_bottom">25dp</dimen>
+
+    <dimen name="text_size_micro">12sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
 </resources>

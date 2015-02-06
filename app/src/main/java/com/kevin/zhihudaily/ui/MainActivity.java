@@ -87,7 +87,7 @@ public class MainActivity extends BaseActivity
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             int position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-            NewsListAdapter.ListItem item = ((NewsListAdapter) recyclerView.getAdapter()).getItemByPosition(position);
+            NewsListAdapter.ListItem item = (NewsListAdapter.ListItem) ((NewsListAdapter) recyclerView.getAdapter()).getItemByPosition(position);
             if (item != null) {
                 DebugLog.d("== item = " + item.getSection() + "  type=" + item.getType());
                 String dateTitle = item.getSection();
@@ -162,9 +162,6 @@ public class MainActivity extends BaseActivity
     private void initViews() {
         ButterKnife.inject(this);
 
-        mToolbar = getToolbar();
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
-
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light, android.R.color.holo_orange_light,
@@ -176,6 +173,8 @@ public class MainActivity extends BaseActivity
     }
 
     private void setupToolbar() {
+        mToolbar = getToolbar();
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
         setToolbarIcon(R.drawable.ic_ab_drawer);
     }
 

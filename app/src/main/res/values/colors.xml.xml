@@ -26,4 +26,18 @@
     <color name="btn_default_light_pressed">#40ffffff</color>
     <color name="bg_comments">#ffffff</color>
     <color name="primaryWhite">@color/background_material_light</color>
+
+    <!-- Comment -->
+    <color name="comment_header">#333333</color>
+    <color name="comment_header_dark">#B8B8B8</color>
+    <color name="comment_item_author">#333333</color>
+    <color name="comment_item_author_dark">#666666</color>
+    <color name="comment_item_content">#666666</color>
+    <color name="comment_item_time">#B8B8B8</color>
+
+    <color name="comment_compose_text">#CECECE</color>
+
+    <color name="comment_no_comment_prompt_text">#e4e4e4</color>
+    <color name="comment_no_comment_prompt_text_dark">#505050</color>
+    <!-- Comment -->
 </resources>
