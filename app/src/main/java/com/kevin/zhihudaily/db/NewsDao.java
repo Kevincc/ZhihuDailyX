@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
+
 import com.kevin.zhihudaily.DebugLog;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
@@ -19,11 +20,9 @@ import java.util.List;
  * Created by chenchao04 on 2014-12-02.
  */
 public class NewsDao {
-    private static final String TAG = "NewsDao";
     private SQLiteDatabase db;
 
     public NewsDao(SQLiteDatabase database) {
-        // TODO Auto-generated constructor stub
         db = database;
     }
 
@@ -59,7 +58,7 @@ public class NewsDao {
                 values.put(DataBaseConstants.TITLE, model.getTitle());
                 values.put(DataBaseConstants.URL, model.getUrl());
                 //                Log.e(TAG, "==Image_source" + model.getImage_source());
-                //                values.put(DataBaseConstants.IMAGE_SOURCE, model.getImage_source());
+                values.put(DataBaseConstants.IMAGE_SOURCE, model.getImage_source());
                 values.put(DataBaseConstants.IMAGE_URL, model.getImage());
                 values.put(DataBaseConstants.IMAGE_THUMBNAIL, model.getThumbnail());
                 values.put(DataBaseConstants.SHARE_URL, model.getShare_url());
@@ -72,7 +71,7 @@ public class NewsDao {
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            // TODO: handle exception
+            DebugLog.d(e.getMessage());
         } finally {
             db.endTransaction();
         }
@@ -93,12 +92,12 @@ public class NewsDao {
             values.put(DataBaseConstants.BODY, model.getBody());
             values.put(DataBaseConstants.IMAGE_SOURCE, model.getImage_source());
 
-            String[] whereArgs = { String.valueOf(model.getId()) };
+            String[] whereArgs = {String.valueOf(model.getId())};
             db.updateWithOnConflict(DataBaseConstants.NEWS_TABLE_NAME, values, DataBaseConstants.ID + "=?", whereArgs,
                     SQLiteDatabase.CONFLICT_REPLACE);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            // TODO: handle exception
+            DebugLog.d(e.getMessage());
         } finally {
             db.endTransaction();
         }
@@ -119,14 +118,13 @@ public class NewsDao {
             if (imageSource != null) {
                 values.put(DataBaseConstants.IMAGE_SOURCE, imageSource);
             }
-            String[] whereArgs = { String.valueOf(id) };
+            String[] whereArgs = {String.valueOf(id)};
             //            Log.d(TAG, "==imageSource=" + imageSource);
             count = db.updateWithOnConflict(DataBaseConstants.NEWS_TABLE_NAME, values, DataBaseConstants.ID + "=?",
                     whereArgs, SQLiteDatabase.CONFLICT_REPLACE);
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            // TODO: handle exception
             DebugLog.e("==Exception==" + e.toString());
         } finally {
             db.endTransaction();
@@ -150,7 +148,7 @@ public class NewsDao {
                 if (imageSource != null) {
                     values.put(DataBaseConstants.IMAGE_SOURCE, imageSource);
                 }
-                String[] whereArgs = { String.valueOf(newsModel.getId()) };
+                String[] whereArgs = {String.valueOf(newsModel.getId())};
                 count = db.updateWithOnConflict(DataBaseConstants.NEWS_TABLE_NAME, values, DataBaseConstants.ID + "=?",
                         whereArgs, SQLiteDatabase.CONFLICT_REPLACE);
             }
@@ -158,7 +156,6 @@ public class NewsDao {
             db.setTransactionSuccessful();
 
         } catch (Exception e) {
-            // TODO: handle exception
             DebugLog.e("==Exception==" + e.toString());
         } finally {
             db.endTransaction();
@@ -170,12 +167,12 @@ public class NewsDao {
     public DailyNewsModel readDaliyNewsList(String date) {
         DailyNewsModel dailyModel = null;
 
-        String[] columns = { DataBaseConstants.ID, DataBaseConstants.DATE, DataBaseConstants.GA_PREFIX,
+        String[] columns = {DataBaseConstants.ID, DataBaseConstants.DATE, DataBaseConstants.GA_PREFIX,
                 DataBaseConstants.IS_TOP_STORY, DataBaseConstants.TITLE, DataBaseConstants.URL,
                 DataBaseConstants.IMAGE_SOURCE, DataBaseConstants.IMAGE_URL, DataBaseConstants.IMAGE_THUMBNAIL,
-                DataBaseConstants.SHARE_URL, DataBaseConstants.BODY };
+                DataBaseConstants.SHARE_URL, DataBaseConstants.BODY};
         String selection = "date=?";
-        String[] selectionArgs = { date };
+        String[] selectionArgs = {date};
         String orderBy = DataBaseConstants.GA_PREFIX + " DESC" + ", " + DataBaseConstants.ID + " DESC";
         Cursor cursor = db.query(DataBaseConstants.NEWS_TABLE_NAME, columns, selection, selectionArgs, null, null,
                 orderBy);
@@ -218,8 +215,7 @@ public class NewsDao {
                 String displayDate = diaplayFormat.format(dateTime);
                 dailyModel.setDisplay_date(displayDate);
             } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                DebugLog.d(e.getMessage());
             }
             cursor.close();
         }
@@ -234,12 +230,12 @@ public class NewsDao {
             return null;
         }
 
-        String[] columns = { DataBaseConstants.ID, DataBaseConstants.DATE, DataBaseConstants.GA_PREFIX,
+        String[] columns = {DataBaseConstants.ID, DataBaseConstants.DATE, DataBaseConstants.GA_PREFIX,
                 DataBaseConstants.IS_TOP_STORY, DataBaseConstants.TITLE, DataBaseConstants.URL,
                 DataBaseConstants.IMAGE_SOURCE, DataBaseConstants.IMAGE_URL, DataBaseConstants.IMAGE_THUMBNAIL,
-                DataBaseConstants.SHARE_URL, DataBaseConstants.BODY };
+                DataBaseConstants.SHARE_URL, DataBaseConstants.BODY};
         String selection = "date=?";
-        String[] selectionArgs = { date };
+        String[] selectionArgs = {date};
         String orderBy = DataBaseConstants.GA_PREFIX + " DESC" + ", " + DataBaseConstants.ID + " DESC";
         Cursor cursor = db.query(DataBaseConstants.NEWS_TABLE_NAME, columns, selection, selectionArgs, null, null,
                 orderBy);
@@ -282,8 +278,7 @@ public class NewsDao {
                 String displayDate = diaplayFormat.format(dateTime);
                 dailyModel.setDisplay_date(displayDate);
             } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                DebugLog.d(e.getMessage());
             }
             cursor.close();
         }
@@ -293,9 +288,9 @@ public class NewsDao {
     public String readNewsBody(int id) {
         String body = null;
 
-        String[] columns = { DataBaseConstants.ID, DataBaseConstants.BODY };
+        String[] columns = {DataBaseConstants.ID, DataBaseConstants.BODY};
         String selection = "id=?";
-        String[] selectionArgs = { String.valueOf(id) };
+        String[] selectionArgs = {String.valueOf(id)};
         Cursor cursor = db
                 .query(DataBaseConstants.NEWS_TABLE_NAME, columns, selection, selectionArgs, null, null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
@@ -310,9 +305,9 @@ public class NewsDao {
     public NewsModel readNewsBodyAndImageSource(int id) {
         NewsModel model = null;
 
-        String[] columns = { DataBaseConstants.ID, DataBaseConstants.BODY };
+        String[] columns = {DataBaseConstants.ID, DataBaseConstants.BODY};
         String selection = "id=?";
-        String[] selectionArgs = { String.valueOf(id) };
+        String[] selectionArgs = {String.valueOf(id)};
         Cursor cursor = db
                 .query(DataBaseConstants.NEWS_TABLE_NAME, columns, selection, selectionArgs, null, null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
@@ -332,7 +327,7 @@ public class NewsDao {
     public String getLastestNewsDate() {
         String date = null;
 
-        String[] columns = { DataBaseConstants.DATE };
+        String[] columns = {DataBaseConstants.DATE};
         String orderBy = "date";
         String groupBy = "date";
         Cursor cursor = db.query(true, DataBaseConstants.NEWS_TABLE_NAME, columns, null, null, groupBy, null, orderBy,
@@ -353,7 +348,7 @@ public class NewsDao {
             return null;
         }
 
-        String[] columns = { DataBaseConstants.ID, DataBaseConstants.DATE, DataBaseConstants.BODY };
+        String[] columns = {DataBaseConstants.ID, DataBaseConstants.DATE, DataBaseConstants.BODY};
         //        String selection = "body=?";
         //        String[] selectionArgs = { "null" };
         Cursor cursor = db.query(DataBaseConstants.NEWS_TABLE_NAME, columns, null, null, null, null, null);

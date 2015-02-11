@@ -25,24 +25,20 @@ public class DataService extends IntentService {
 
     public DataService() {
         super(DataService.class.getSimpleName());
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
         super.onCreate();
     }
 
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // TODO Auto-generated method stub
         if (intent == null) {
             DebugLog.d("Intent is null!");
             return;
@@ -65,7 +61,6 @@ public class DataService extends IntentService {
         try {
             actionType = Action.valueOf(action);
         } catch (Exception e) {
-            // TODO: handle exception
             DebugLog.d("action type is null");
         }
 
@@ -73,61 +68,19 @@ public class DataService extends IntentService {
         String date = intent.getStringExtra(Constants.EXTRA_NEWS_DATE);
         switch (actionType) {
             case ACTION_WRITE_DAILY_NEWS:
-                String key = intent.getStringExtra(Constants.EXTRA_CACHE_ID);
-                if (key == null) {
-                    break;
-                }
-
-                //            DailyNewsModel model = DataCache.getInstance().getDailyNewsModel(key);
-                //            DataBaseManager.getInstance().writeDailyNewsToDB(model);
-
+                writeDailyNewsToDB(intent);
                 break;
             case ACTION_WRITE_NEWS_DEATIL:
-                String body = intent.getStringExtra(Constants.EXTRA_NEWS_BODY);
-                if (id == -1 || body == null) {
-                    break;
-                }
-
-                dao.updateNewsBodyToDB(id, body, null);
+                writeNewsDetailToDB(intent);
                 break;
             case ACTION_READ_DAILY_NEWS:
-                if (date == null) {
-                    break;
-                }
-                DailyNewsModel dailyNewsModel = dao.readDaliyNewsList(date);
-                if (dailyNewsModel != null) {
-                    DataCache.getInstance().addDailyCache(dailyNewsModel.getDate(), dailyNewsModel);
-
-                    // notify ui to update
-                    //                mBroadcastNotifier.notifyDailyNewsDataReady(date);
-                    EventBus.getInstance().post(dailyNewsModel);
-                }
+                readDailyNewsByDate(date);
                 break;
             case ACTION_READ_LASTEST_NEWS:
-                DailyNewsModel lastestNewsModel = dao.readLastestNewsList();
-                DebugLog.e("==Model size==" + lastestNewsModel.getNewsList().size());
-                if (lastestNewsModel != null) {
-                    DataCache.getInstance().addDailyCache(lastestNewsModel.getDate(), lastestNewsModel);
-
-                    // notify ui to update
-                    //                mBroadcastNotifier.notifyDailyNewsDataReady(lastestNewsModel.getDate());
-                    EventBus.getInstance().post(lastestNewsModel);
-                }
+                readLastDailyNews();
                 break;
             case ACTION_READ_NEWS_DEATIL:
-                if (date == null || id == -1) {
-                    break;
-                }
-                //            String news_body = DataBaseManager.getInstance().readNewsBody(news_id);
-                NewsModel model = dao.readNewsBodyAndImageSource(id);
-                if (model != null) {
-                    // Update to db
-                    DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
-
-                    // Notify ui to update
-                    //                mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
-                    EventBus.getInstance().post(model);
-                }
+                readNewsDetail(id);
                 break;
             case ACTION_GET_TODAY_NEWS:
                 requestTodayNews();
@@ -152,6 +105,58 @@ public class DataService extends IntentService {
         }
     }
 
+    private void writeDailyNewsToDB(Intent intent) {
+        if (intent == null) {
+            return;
+        }
+
+        DailyNewsModel model = intent.getParcelableExtra(Constants.EXTRA_DAILY_NEWS_MODEL);
+        dao.writeDailyNewsToDB(model);
+    }
+
+    private void writeNewsDetailToDB(Intent intent) {
+        int id = intent.getIntExtra(Constants.EXTRA_NEWS_ID, -1);
+        String body = intent.getStringExtra(Constants.EXTRA_NEWS_BODY);
+        if (id == -1 || body == null) {
+            return;
+        }
+        dao.updateNewsBodyToDB(id, body, null);
+    }
+
+    private void readDailyNewsByDate(String date) {
+        if (date == null) {
+            return;
+        }
+        DailyNewsModel dailyNewsModel = dao.readDaliyNewsList(date);
+        if (dailyNewsModel != null) {
+            // notify ui to update
+            EventBus.getInstance().post(dailyNewsModel);
+        }
+    }
+
+    private void readLastDailyNews() {
+        DailyNewsModel lastestNewsModel = dao.readLastestNewsList();
+        DebugLog.e("==Model size==" + lastestNewsModel.getNewsList().size());
+        if (lastestNewsModel != null) {
+            // notify ui to update
+            EventBus.getInstance().post(lastestNewsModel);
+        }
+    }
+
+    private void readNewsDetail(int id) {
+        if (id == -1) {
+            return;
+        }
+        //            String news_body = DataBaseManager.getInstance().readNewsBody(news_id);
+        NewsModel model = dao.readNewsBodyAndImageSource(id);
+        if (model != null) {
+            // Update to db
+
+            // Notify ui to update
+            EventBus.getInstance().post(model);
+        }
+    }
+
     private void requestTodayNews() {
         //        Log.d(TAG, "==IN=" + SystemClock.currentThreadTimeMillis());
         try {
@@ -173,12 +178,10 @@ public class DataService extends IntentService {
 
             }
         } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
+            DebugLog.d(e.getMessage());
         }
         //        Log.d(TAG, "==Model=" + model.getDisplay_date());
         //        Log.d(TAG, "==OUT=" + SystemClock.currentThreadTimeMillis());
-
     }
 
     private void requestDailyNewsByDate(String date) {
@@ -193,8 +196,6 @@ public class DataService extends IntentService {
         NewsModel model = ZhihuRequest.getRequestService().getNewsById(id);
         //        Log.d(TAG, "==ModelBody=" + model.getBody());
         if (model != null) {
-            //            DataCache.getInstance().updateNewsDetailByID(date, id, model.getBody(), model.getImage_source());
-
             // Notify ui to update
             //            mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
             EventBus.getInstance().post(model);

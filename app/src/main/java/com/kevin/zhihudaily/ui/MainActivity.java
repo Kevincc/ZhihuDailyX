@@ -3,6 +3,7 @@ package com.kevin.zhihudaily.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,6 +23,8 @@ import com.kevin.zhihudaily.DebugLog;
 import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.Utils;
+import com.kevin.zhihudaily.ZhihuDailyApplication;
+import com.kevin.zhihudaily.db.DataBaseManager;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
@@ -63,38 +66,6 @@ public class MainActivity extends BaseActivity
     private String mTodayDateString;
     private String mIndexDate;
     private int preDays = 0;
-    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                int lastPosition;
-                final int childCount = recyclerView.getChildCount();
-                final int itemSize = recyclerView.getAdapter().getItemCount();
-                if (childCount == 0) {
-                    lastPosition = 0;
-                } else {
-                    lastPosition = recyclerView.getChildPosition(recyclerView.getChildAt(childCount - 1));
-                }
-//                DebugLog.d("childcount = " + childCount + "  lastposition = " + lastPosition + "  itemSize = " + itemSize);
-                if (lastPosition == (itemSize - 1)) {
-                    requestNextDayNews();
-                }
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            int position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-            NewsListAdapter.ListItem item = (NewsListAdapter.ListItem) ((NewsListAdapter) recyclerView.getAdapter()).getItemByPosition(position);
-            if (item != null) {
-                DebugLog.d("== item = " + item.getSection() + "  type=" + item.getType());
-                String dateTitle = item.getSection();
-                getToolbar().setTitle(dateTitle + "");
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,13 +199,13 @@ public class MainActivity extends BaseActivity
 
         } else {
             DebugLog.d("==DB-Mode==" + date);
-            //            if (isToday) {
-            //                readLastestNewsFromDB();
-            //            } else {
-            //                date = getPreDateString(date, "yyyyMMdd");
-            //                DebugLog.d("==PreDate==" + date);
-            //                readNewsFromDBByDate(date);
-            //            }
+            if (isToday) {
+                readLastestNewsFromDB();
+            } else {
+                date = Utils.getPreDateString(date, "yyyyMMdd");
+                DebugLog.d("==PreDate==" + date);
+                readNewsFromDBByDate(date);
+            }
         }
     }
 
@@ -244,6 +215,22 @@ public class MainActivity extends BaseActivity
         DebugLog.d("==preDate==" + date);
         requestNewsList(date, false);
         preDays++;
+    }
+
+    private void readLastestNewsFromDB() {
+        // Read db data
+        Intent intent = new Intent(this, DataService.class);
+        intent.setAction(Constants.Action.ACTION_READ_LASTEST_NEWS.toString());
+        // intent.putExtra(Constants.INTENT_NEWS_DATE, date);
+        startService(intent);
+    }
+
+    private void readNewsFromDBByDate(String date) {
+        // Read db data
+        Intent intent = new Intent(this, DataService.class);
+        intent.setAction(Constants.Action.ACTION_READ_DAILY_NEWS.toString());
+        intent.putExtra(Constants.EXTRA_NEWS_DATE, date);
+        startService(intent);
     }
 
     @Subscribe
@@ -292,25 +279,33 @@ public class MainActivity extends BaseActivity
 
         int newTimeStamp = Integer.valueOf(model.getNewsList().get(0).getGa_prefix());
 
-        //        if (DataBaseManager.getInstance().checkDataExpire(newTimeStamp) >= 0) {
-        //            // Write to db
-        //            // Add to cache and write to db
-        //            // DataCache.getInstance().addDailyCache(model.getDate(), model);
-        //            // Intent intent = new Intent(getActivity(), DataService.class);
-        //            // intent.putExtra(Constants.EXTRA_CACHE_ID, model.getDate());
-        //            // intent.setAction(Constants.Action.ACTION_WRITE_DAILY_NEWS.toString());
-        //            // getActivity().startService(intent);
-        //
-        //            // Auto start data cache
-        //            new Handler().postDelayed(new Runnable() {
-        //                @Override
-        //                public void run() {
-        //                    if (ZhihuDailyApplication.sNetworkType == ConnectivityManager.TYPE_WIFI) {
-        //                        startDataCache(mTodayDateString);
-        //                    }
-        //                }
-        //            }, 2000);
-        //        }
+        if (DataBaseManager.getInstance().checkDataExpire(newTimeStamp) >= 0) {
+            // Write to db
+            if (ZhihuDailyApplication.sNetworkType == ConnectivityManager.TYPE_WIFI) {
+                writeDailyModetoDB(date, model);
+            }
+
+            // Auto start data cache
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (ZhihuDailyApplication.sNetworkType == ConnectivityManager.TYPE_WIFI) {
+//                        startDataCache(mTodayDateString);
+//                    }
+//                }
+//            }, 2000);
+        }
+    }
+
+    private void writeDailyModetoDB(String date, DailyNewsModel model) {
+        Intent intent = new Intent(ZhihuDailyApplication.getInstance().getApplicationContext(), DataService.class);
+        intent.setAction(Constants.Action.ACTION_START_OFFLINE_DOWNLOAD.toString());
+        intent.putExtra(Constants.EXTRA_NEWS_DATE, date);
+        intent.putExtra(Constants.EXTRA_DAILY_NEWS_MODEL, model);
+        ZhihuDailyApplication.getInstance().getApplicationContext().startService(intent);
+
+        // Show notification
+        //showNotification();
     }
 
     @Override
@@ -324,6 +319,39 @@ public class MainActivity extends BaseActivity
         mIsResetList = true;
         requestNewsList(mTodayDateString, true);
     }
+
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                int lastPosition;
+                final int childCount = recyclerView.getChildCount();
+                final int itemSize = recyclerView.getAdapter().getItemCount();
+                if (childCount == 0) {
+                    lastPosition = 0;
+                } else {
+                    lastPosition = recyclerView.getChildPosition(recyclerView.getChildAt(childCount - 1));
+                }
+//                DebugLog.d("childcount = " + childCount + "  lastposition = " + lastPosition + "  itemSize = " + itemSize);
+                if (lastPosition == (itemSize - 1)) {
+                    requestNextDayNews();
+                }
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            NewsListAdapter.ListItem item = (NewsListAdapter.ListItem) ((NewsListAdapter) recyclerView.getAdapter()).getItemByPosition(position);
+            if (item != null) {
+                DebugLog.d("== item = " + item.getSection() + "  type=" + item.getType());
+                String dateTitle = item.getSection();
+                getToolbar().setTitle(dateTitle + "");
+            }
+        }
+    };
 
     @Override
     public void onItemClick(View view, NewsListAdapter.ListItem item) {

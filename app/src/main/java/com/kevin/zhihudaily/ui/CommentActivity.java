@@ -238,36 +238,4 @@ public class CommentActivity extends BaseActivity implements SwipeRefreshLayout.
             mShortCommentReady = true;
         }
     }
-
-//    private class CommentReadyReceiver extends BroadcastReceiver {
-//        // Prevents instantiation
-//        private CommentReadyReceiver() {
-//        }
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            // TODO Auto-generated method stub
-//            String action = intent.getAction();
-//            if (action == null || !Constants.Action.ACTION_NOTIFY_COMMENTS_READY.toString().endsWith(action)) {
-//                return;
-//            }
-//
-//            int news_id = intent.getIntExtra(Constants.EXTRA_NEWS_ID, -1);
-//            int comment_type = intent.getIntExtra(Constants.EXTRA_COMMENT_TYPE, Constants.COMMENT_TYPE_LONG);
-//            CommentsModel model = DataCache.getInstance().getCommentsModel(news_id);
-//
-//            updateCommentList(model, comment_type);
-//
-//            if (comment_type == Constants.COMMENT_TYPE_LONG) {
-//                mLongCommentReady = true;
-//            } else if (comment_type == Constants.COMMENT_TYPE_SHORT) {
-//                mShortCommentReady = true;
-//            }
-//
-//            // remove cache
-//            DataCache.getInstance().removeCommentCache(news_id);
-//
-//        }
-//
-//    }
 }

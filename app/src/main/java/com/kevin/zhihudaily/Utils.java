@@ -27,6 +27,11 @@ import android.os.StrictMode;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 /**
  * Class containing some static utility methods.
  */
@@ -117,5 +122,41 @@ public class Utils {
         }
 
         return screenWidth;
+    }
+
+    public static String calendarToString(Calendar calendar, String dateFormat) {
+        if (calendar == null || dateFormat == null) {
+            return null;
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat, Locale.CHINA);
+        return simpleDateFormat.format(calendar.getTime());
+    }
+
+    public static Calendar stringToCalendar(String dateString, String dateFormat) {
+        if (dateString == null || dateFormat == null) {
+            return null;
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat, Locale.CHINA);
+        try {
+            simpleDateFormat.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
+        return simpleDateFormat.getCalendar();
+    }
+
+    public static String getPreDateString(String dateString, String dateFormat) {
+        String preDataString = null;
+        if (dateString == null || dateFormat == null) {
+            return null;
+        }
+
+        Calendar calendar = stringToCalendar(dateString, dateFormat);
+        calendar.add(Calendar.DATE, -1);
+
+        preDataString = calendarToString(calendar, dateFormat);
+        return preDataString;
     }
 }

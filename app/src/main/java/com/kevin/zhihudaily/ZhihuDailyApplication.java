@@ -2,8 +2,8 @@ package com.kevin.zhihudaily;
 
 import android.app.Application;
 import android.os.SystemClock;
+
 import com.kevin.zhihudaily.db.DataBaseManager;
-import com.kevin.zhihudaily.db.DataCache;
 
 public class ZhihuDailyApplication extends Application {
 
@@ -32,8 +32,6 @@ public class ZhihuDailyApplication extends Application {
     public void onTerminate() {
         // TODO Auto-generated method stub
         super.onTerminate();
-
-        DataCache.getInstance().clearAllCache();
 
         long livetime = SystemClock.elapsedRealtime() - mStatTime;
         //        StatService.onEventDuration(this, getString(R.string.stat_event_app_live),
