@@ -346,7 +346,7 @@ public class MainActivity extends BaseActivity
             int position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
             NewsListAdapter.ListItem item = (NewsListAdapter.ListItem) ((NewsListAdapter) recyclerView.getAdapter()).getItemByPosition(position);
             if (item != null) {
-                DebugLog.d("== item = " + item.getSection() + "  type=" + item.getType());
+                DebugLog.d("== item = " + item.getSection() + "  type=" + item.getType() + "  position = " + position);
                 String dateTitle = item.getSection();
                 getToolbar().setTitle(dateTitle + "");
             }
