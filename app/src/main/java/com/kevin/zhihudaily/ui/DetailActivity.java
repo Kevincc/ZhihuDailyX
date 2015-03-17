@@ -8,9 +8,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.baidu.mobstat.StatService;
-import com.kevin.zhihudaily.Constants;
-import com.kevin.zhihudaily.DebugLog;
-import com.kevin.zhihudaily.EventBus;
+import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.EventBus;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;

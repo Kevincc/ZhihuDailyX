@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.kevin.zhihudaily;
+package com.kevin.zhihudaily.utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;

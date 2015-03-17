@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.Utils;
+import com.kevin.zhihudaily.utils.Utils;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
 import com.squareup.picasso.Picasso;

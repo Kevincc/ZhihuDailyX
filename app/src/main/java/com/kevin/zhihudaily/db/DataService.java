@@ -3,15 +3,16 @@ package com.kevin.zhihudaily.db;
 import android.app.IntentService;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.SystemClock;
 
-import com.kevin.zhihudaily.Constants;
-import com.kevin.zhihudaily.Constants.Action;
-import com.kevin.zhihudaily.DebugLog;
-import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.http.ZhihuRequest;
 import com.kevin.zhihudaily.model.CommentsModel;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.utils.Constants.Action;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,9 +20,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import de.halfbit.tinybus.Produce;
+
 public class DataService extends IntentService {
 
     private NewsDao dao;
+
+    private DailyNewsModel mDailyNewsModel;
 
     public DataService() {
         super(DataService.class.getSimpleName());
@@ -158,7 +163,7 @@ public class DataService extends IntentService {
     }
 
     private void requestTodayNews() {
-        //        Log.d(TAG, "==IN=" + SystemClock.currentThreadTimeMillis());
+        DebugLog.d("==IN=" + SystemClock.currentThreadTimeMillis());
         try {
             DailyNewsModel model = ZhihuRequest.getRequestService().getDailyNewsToday();
 
@@ -171,7 +176,8 @@ public class DataService extends IntentService {
                         // update timestamp
                         DataBaseManager.getInstance().setDataTimeStamp(newTimeStamp);
                     }
-
+                    DebugLog.d("==Model=" + model.getDisplay_date());
+                    mDailyNewsModel = model;
                     // notify ui to update
                     EventBus.getInstance().post(model);
                 }
@@ -180,8 +186,12 @@ public class DataService extends IntentService {
         } catch (Exception e) {
             DebugLog.d(e.getMessage());
         }
-        //        Log.d(TAG, "==Model=" + model.getDisplay_date());
-        //        Log.d(TAG, "==OUT=" + SystemClock.currentThreadTimeMillis());
+        DebugLog.d("==OUT=" + SystemClock.currentThreadTimeMillis());
+    }
+
+    @Produce
+    public DailyNewsModel getLastDailyNewsModel() {
+        return mDailyNewsModel;
     }
 
     private void requestDailyNewsByDate(String date) {

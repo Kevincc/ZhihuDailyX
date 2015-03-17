@@ -9,17 +9,17 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.baidu.mobstat.StatService;
-import com.halfbit.tinybus.Subscribe;
-import com.kevin.zhihudaily.Constants;
-import com.kevin.zhihudaily.DebugLog;
-import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.Utils;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.CommentsModel;
+import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.utils.Utils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.halfbit.tinybus.Subscribe;
 
 public class CommentActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String NEWS_ID = "news_id";

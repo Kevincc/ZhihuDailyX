@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 
-import com.kevin.zhihudaily.DebugLog;
+import com.kevin.zhihudaily.utils.DebugLog;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
 

@@ -17,17 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.baidu.mobstat.StatService;
-import com.halfbit.tinybus.Subscribe;
-import com.kevin.zhihudaily.Constants;
-import com.kevin.zhihudaily.DebugLog;
-import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.Utils;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
 import com.kevin.zhihudaily.db.DataBaseManager;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.halfbit.tinybus.Subscribe;
 
 public class MainActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener, NewsListAdapter.OnItemClickListener {
@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        DebugLog.e("==onCreate");
         // init views
         initViews();
     }
@@ -83,11 +83,13 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
+        DebugLog.e("==onStart");
         EventBus.getInstance().register(this);
     }
 
     @Override
     protected void onStop() {
+        DebugLog.e("==onStop");
         EventBus.getInstance().unregister(this);
         super.onStop();
     }
@@ -95,12 +97,14 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        DebugLog.e("==onResume");
         StatService.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        DebugLog.e("==onPause");
         StatService.onPause(this);
     }
 
@@ -234,7 +238,7 @@ public class MainActivity extends BaseActivity
     }
 
     @Subscribe
-    public void onNewsReadyEvent(DailyNewsModel model) {
+    public void onDailyNewsModel(DailyNewsModel model) {
         // Set SwipeRefreshLayout to stop
         mSwipeLayout.setRefreshing(false);
 

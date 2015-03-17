@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.kevin.zhihudaily.DebugLog;
+import com.kevin.zhihudaily.utils.DebugLog;
 
 /**
  * Created by chenchao04 on 2015-02-11.

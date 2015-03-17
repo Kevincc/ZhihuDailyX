@@ -29,20 +29,20 @@ import com.baidu.mobstat.StatService;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
-import com.halfbit.tinybus.Subscribe;
-import com.kevin.zhihudaily.Constants;
-import com.kevin.zhihudaily.DebugLog;
-import com.kevin.zhihudaily.EventBus;
 import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.Utils;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
 import com.kevin.zhihudaily.db.DataService;
 import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.utils.Utils;
 import com.kevin.zhihudaily.view.ExWebView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.halfbit.tinybus.Subscribe;
 
 /**
  * A simple {@link Fragment} subclass.

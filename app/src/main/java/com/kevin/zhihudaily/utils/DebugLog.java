@@ -9,7 +9,7 @@
  For more information, please refer to <http://unlicense.org/>
  */
 
-package com.kevin.zhihudaily;
+package com.kevin.zhihudaily.utils;
 
 import android.util.Log;
 

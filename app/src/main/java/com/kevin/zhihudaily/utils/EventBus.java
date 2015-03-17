@@ -1,6 +1,8 @@
-package com.kevin.zhihudaily;
+package com.kevin.zhihudaily.utils;
 
-import com.halfbit.tinybus.TinyBus;
+import com.kevin.zhihudaily.ZhihuDailyApplication;
+
+import de.halfbit.tinybus.TinyBus;
 
 /**
  * Created by chenchao04 on 2014-12-04.
