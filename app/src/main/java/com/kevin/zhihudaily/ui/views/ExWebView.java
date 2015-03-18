@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.view;
+package com.kevin.zhihudaily.ui.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:indeterminate="true" />
 
-            <com.kevin.zhihudaily.view.ExWebView
+            <com.kevin.zhihudaily.ui.views.ExWebView
                 android:id="@+id/wv_webview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

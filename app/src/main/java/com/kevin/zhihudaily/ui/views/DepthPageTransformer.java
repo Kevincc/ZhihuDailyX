@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.view;
+package com.kevin.zhihudaily.ui.views;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;

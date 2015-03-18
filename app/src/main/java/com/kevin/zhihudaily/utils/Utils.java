@@ -27,6 +27,8 @@ import android.os.StrictMode;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.kevin.zhihudaily.ui.activities.MainActivity;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -48,7 +50,7 @@ public class Utils {
 
             if (Utils.hasHoneycomb()) {
                 threadPolicyBuilder.penaltyFlashScreen();
-                vmPolicyBuilder.setClassInstanceLimit(com.kevin.zhihudaily.ui.MainActivity.class, 1);
+                vmPolicyBuilder.setClassInstanceLimit(MainActivity.class, 1);
             }
             StrictMode.setThreadPolicy(threadPolicyBuilder.build());
             StrictMode.setVmPolicy(vmPolicyBuilder.build());

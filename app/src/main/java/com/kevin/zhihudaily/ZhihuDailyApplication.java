@@ -3,7 +3,7 @@ package com.kevin.zhihudaily;
 import android.app.Application;
 import android.os.SystemClock;
 
-import com.kevin.zhihudaily.db.DataBaseManager;
+import com.kevin.zhihudaily.provider.DataBaseManager;
 
 public class ZhihuDailyApplication extends Application {
 

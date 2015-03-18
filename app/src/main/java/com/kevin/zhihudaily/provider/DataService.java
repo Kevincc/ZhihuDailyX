@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.db;
+package com.kevin.zhihudaily.provider;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -9,10 +9,10 @@ import com.kevin.zhihudaily.http.ZhihuRequest;
 import com.kevin.zhihudaily.model.CommentsModel;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.utils.Constants;
-import com.kevin.zhihudaily.utils.Constants.Action;
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.common.Constants.Action;
 import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.common.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

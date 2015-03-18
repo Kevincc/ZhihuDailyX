@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.ui;
+package com.kevin.zhihudaily.ui.activities;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,9 +8,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.baidu.mobstat.StatService;
-import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.ui.fragments.DetailFragment;
 import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.common.EventBus;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;

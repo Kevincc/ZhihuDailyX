@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.ui;
+package com.kevin.zhihudaily.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.common.Constants;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.model.Comment;
 import com.kevin.zhihudaily.model.CommentsModel;

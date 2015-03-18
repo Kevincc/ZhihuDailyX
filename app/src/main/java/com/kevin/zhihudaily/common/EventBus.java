@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.utils;
+package com.kevin.zhihudaily.common;
 
 import com.kevin.zhihudaily.ZhihuDailyApplication;
 

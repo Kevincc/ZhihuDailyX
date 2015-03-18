@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.ui;
+package com.kevin.zhihudaily.ui.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,13 +31,15 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
-import com.kevin.zhihudaily.db.DataService;
+import com.kevin.zhihudaily.provider.DataService;
 import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.ui.activities.CommentActivity;
+import com.kevin.zhihudaily.ui.activities.DetailActivity;
 import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.common.EventBus;
 import com.kevin.zhihudaily.utils.Utils;
-import com.kevin.zhihudaily.view.ExWebView;
+import com.kevin.zhihudaily.ui.views.ExWebView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;

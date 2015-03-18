@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.ui;
+package com.kevin.zhihudaily.ui.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -19,13 +19,14 @@ import android.view.View;
 import com.baidu.mobstat.StatService;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
-import com.kevin.zhihudaily.db.DataBaseManager;
-import com.kevin.zhihudaily.db.DataService;
+import com.kevin.zhihudaily.provider.DataBaseManager;
+import com.kevin.zhihudaily.provider.DataService;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.ui.adapters.NewsListAdapter;
 import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.common.EventBus;
 import com.kevin.zhihudaily.utils.Utils;
 
 import java.text.SimpleDateFormat;

@@ -70,7 +70,7 @@
             android:value="true" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,25 +79,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.DetailActivity"
+            android:name=".ui.activities.DetailActivity"
             android:launchMode="singleTask"
-            android:parentActivityName="com.kevin.zhihudaily.ui.MainActivity"
+            android:parentActivityName=".ui.activities.MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".ui.CommentActivity"
+            android:name=".ui.activities.CommentActivity"
             android:label="@string/title_comment"
-            android:parentActivityName="com.kevin.zhihudaily.ui.DetailActivity"
+            android:parentActivityName=".ui.activities.DetailActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DetailActivity" />
         </activity>
 
-        <service android:name="com.kevin.zhihudaily.db.DataService"></service>
+        <service android:name="com.kevin.zhihudaily.provider.DataService"></service>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.ui;
+package com.kevin.zhihudaily.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,11 +10,12 @@ import android.widget.Toast;
 
 import com.baidu.mobstat.StatService;
 import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.db.DataService;
+import com.kevin.zhihudaily.provider.DataService;
 import com.kevin.zhihudaily.model.CommentsModel;
-import com.kevin.zhihudaily.utils.Constants;
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.ui.adapters.CommentListAdapter;
 import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.utils.EventBus;
+import com.kevin.zhihudaily.common.EventBus;
 import com.kevin.zhihudaily.utils.Utils;
 
 import butterknife.ButterKnife;

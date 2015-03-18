@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.db;
+package com.kevin.zhihudaily.provider;
 
 import android.database.sqlite.SQLiteDatabase;
 

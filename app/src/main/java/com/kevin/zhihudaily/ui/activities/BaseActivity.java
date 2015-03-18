@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.ui;
+package com.kevin.zhihudaily.ui.activities;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;

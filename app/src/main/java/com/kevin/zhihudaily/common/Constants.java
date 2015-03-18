@@ -1,4 +1,4 @@
-package com.kevin.zhihudaily.utils;
+package com.kevin.zhihudaily.common;
 
 public class Constants {
 
