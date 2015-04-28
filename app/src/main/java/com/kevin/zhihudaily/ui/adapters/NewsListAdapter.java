@@ -1,5 +1,19 @@
 package com.kevin.zhihudaily.ui.adapters;
 
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import com.kevin.zhihudaily.R;
+import com.kevin.zhihudaily.model.DailyNewsModel;
+import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.utils.Utils;
+import com.squareup.picasso.Picasso;
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,20 +23,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.utils.Utils;
-import com.kevin.zhihudaily.model.DailyNewsModel;
-import com.kevin.zhihudaily.model.NewsModel;
-import com.squareup.picasso.Picasso;
-
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by chenchao04 on 2014-12-01.
@@ -44,12 +44,26 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = null;
         if (ListItem.SECTION == viewType) {
-            view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_section, parent, false);
-        } else if (ListItem.ITEM == viewType) {
-            view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_item, parent, false);
+            return onCreateSectionViewHolder(parent, viewType);
+        } else if (ListItem.HEADER == viewType) {
+            return onCreateHeaderViewHolder(parent, viewType);
         }
+        return onCreateItemViewHolder(parent, viewType);
+    }
+
+    private RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_item, parent, false);
+        return new NewsFeedViewHolder(view);
+    }
+
+    private RecyclerView.ViewHolder onCreateSectionViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_section, parent, false);
+        return new NewsFeedViewHolder(view);
+    }
+
+    private RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(wrContext.get()).inflate(R.layout.news_list_section, parent, false);
         return new NewsFeedViewHolder(view);
     }
 
@@ -57,7 +71,56 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         runEnterAnimation(viewHolder.itemView, position);
         final NewsFeedViewHolder holder = (NewsFeedViewHolder) viewHolder;
-        setupItemView(holder, position);
+        int viewType = holder.getItemViewType();
+        //        setupItemView(holder, position);
+        switch (viewType) {
+            case ListItem.HEADER:
+                onBindHeaderViewHolder(holder, position);
+                break;
+            case ListItem.SECTION:
+                onBindSectionViewHolder(holder, position);
+                break;
+            case ListItem.ITEM:
+                onBindItemViewHolder(holder, position);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void onBindItemViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if (mItemList == null || mItemList.size() == 0) {
+            return;
+        }
+        ListItem item = mItemList.get(position);
+
+        NewsModel model = item.getModel();
+        NewsFeedViewHolder holder = (NewsFeedViewHolder) viewHolder;
+        holder.titleTextView.setText(model.getTitle());
+
+        String url = model.getThumbnail();
+        if (url != null && !url.isEmpty()) {
+            Picasso.with(wrContext.get()).load(url).placeholder(R.drawable.spinner_76_inner_holo).fit()
+                    .into(holder.imageView);
+        }
+
+        if (holder.container != null) {
+            holder.container.setOnClickListener(this);
+            holder.container.setTag(item);
+        }
+    }
+
+    private void onBindSectionViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if (mItemList == null || mItemList.size() == 0) {
+            return;
+        }
+        ListItem item = mItemList.get(position);
+        NewsFeedViewHolder holder = (NewsFeedViewHolder) viewHolder;
+        holder.titleTextView.setText(item.getSection());
+    }
+
+    private void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+
     }
 
     private void setupItemView(NewsFeedViewHolder holder, int position) {
@@ -96,7 +159,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             for (int j = 0; j < len; j++) {
                 newsList.get(j).setDate(date);
-                ListItem item = new ListItem(ListItem.ITEM, newsList.get(j), dailyModel.getDisplay_date(), len, j, date);
+                ListItem item =
+                        new ListItem(ListItem.ITEM, newsList.get(j), dailyModel.getDisplay_date(), len, j, date);
                 //                Log.e(TAG, "==item[" + j + "]" + "=title=" + newsList.get(j).getTitle());
                 mItemList.add(item);
             }
@@ -224,6 +288,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static class ListItem {
         public static final int ITEM = 0;
         public static final int SECTION = 1;
+        public static final int HEADER = 2;
 
         public final int type;
         public final String section;

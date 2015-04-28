@@ -14,7 +14,7 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+    buildToolsVersion "22.0.0"
 
     defaultConfig {
         applicationId "com.kevin.zhihudaily"
@@ -44,4 +44,5 @@ dependencies {
     compile 'com.jakewharton:butterknife:5.1.2'
     compile 'de.halfbit:tinybus:3.0.1'
     compile 'com.github.ksoichiro:android-observablescrollview:1.2.1'
+    compile 'me.relex:circleindicator:1.1.2@aar'
 }
