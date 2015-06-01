@@ -33,5 +33,6 @@
     <string name="short_comment">短评</string>
     <string name="network_disconnet">网络未连接</string>
     <string name="error_argument">参数错误，无法获取评论</string>
+    <string name="title_activity_main_activity2">MainActivity2</string>
 
 </resources>
