@@ -1,22 +1,5 @@
 package com.kevin.zhihudaily.ui.newactivities;
 
-import java.util.ArrayList;
-import java.util.Date;
-
-import com.baidu.mobstat.StatService;
-import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.ZhihuDailyApplication;
-import com.kevin.zhihudaily.common.Constants;
-import com.kevin.zhihudaily.common.EventBus;
-import com.kevin.zhihudaily.model.DailyNewsModel;
-import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.provider.DataBaseManager;
-import com.kevin.zhihudaily.provider.DataService;
-import com.kevin.zhihudaily.ui.activities.DetailActivity;
-import com.kevin.zhihudaily.ui.adapters.NewsListAdapter;
-import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.utils.Utils;
-
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -33,7 +16,22 @@ import android.view.MenuItem;
 import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import de.halfbit.tinybus.Subscribe;
+import com.baidu.mobstat.StatService;
+import com.kevin.zhihudaily.R;
+import com.kevin.zhihudaily.ZhihuDailyApplication;
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.model.DailyNewsModel;
+import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.provider.DataBaseManager;
+import com.kevin.zhihudaily.provider.DataService;
+import com.kevin.zhihudaily.ui.activities.DetailActivity;
+import com.kevin.zhihudaily.ui.adapters.NewsListAdapter;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.Utils;
+import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity2 extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener, NewsListAdapter.OnItemClickListener {
@@ -82,13 +80,15 @@ public class MainActivity2 extends BaseActivity
     protected void onStart() {
         super.onStart();
         DebugLog.e("==onStart");
-        EventBus.getInstance().register(this);
+//        EventBus.getInstance().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         DebugLog.e("==onStop");
-        EventBus.getInstance().unregister(this);
+//        EventBus.getInstance().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -299,7 +299,6 @@ public class MainActivity2 extends BaseActivity
         //showNotification();
     }
 
-    @Subscribe
     public void onDailyNewsModel(DailyNewsModel model) {
         // Set SwipeRefreshLayout to stop
         mSwipeLayout.setRefreshing(false);
@@ -312,6 +311,10 @@ public class MainActivity2 extends BaseActivity
         mIndexDate = model.getDate();
         DebugLog.d("==Index date==" + mIndexDate);
         updateNewsList(model);
+    }
+
+    public void onEventMainThread(DailyNewsModel model) {
+        onDailyNewsModel(model);
     }
 
     private void updateNewsList(DailyNewsModel model) {

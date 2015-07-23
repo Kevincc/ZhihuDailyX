@@ -1,7 +1,5 @@
 package com.kevin.zhihudaily.model;
 
-import org.json.JSONObject;
-
 public class BaseNewsModel {
     String image_source = null;
     String title = null;
@@ -85,19 +83,4 @@ public class BaseNewsModel {
         this.date = date;
     }
 
-    public boolean parseJSON(JSONObject json) {
-        if (json == null) {
-            return false;
-        }
-
-        this.image_source = json.optString("image_source");
-        this.title = json.optString("title");
-        this.url = json.optString("url");
-        this.image = json.optString("image");
-        this.share_url = json.optString("share_url");
-        this.thumbnail = json.optString("thumbnail");
-        this.ga_prefix = json.optString("ga_prefix");
-        this.id = json.optInt("id");
-        return true;
-    }
 }

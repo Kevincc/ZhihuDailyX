@@ -7,20 +7,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
-
-import com.baidu.mobstat.StatService;
-import com.kevin.zhihudaily.R;
-import com.kevin.zhihudaily.provider.DataService;
-import com.kevin.zhihudaily.model.CommentsModel;
-import com.kevin.zhihudaily.common.Constants;
-import com.kevin.zhihudaily.ui.adapters.CommentListAdapter;
-import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.common.EventBus;
-import com.kevin.zhihudaily.utils.Utils;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import de.halfbit.tinybus.Subscribe;
+import com.baidu.mobstat.StatService;
+import com.kevin.zhihudaily.R;
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.model.CommentsModel;
+import com.kevin.zhihudaily.provider.DataService;
+import com.kevin.zhihudaily.ui.adapters.CommentListAdapter;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.Utils;
+import de.greenrobot.event.EventBus;
 
 public class CommentActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String NEWS_ID = "news_id";
@@ -83,12 +80,14 @@ public class CommentActivity extends BaseActivity implements SwipeRefreshLayout.
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getInstance().register(this);
+//        EventBus.getInstance().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
-        EventBus.getInstance().unregister(this);
+//        EventBus.getInstance().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -225,7 +224,6 @@ public class CommentActivity extends BaseActivity implements SwipeRefreshLayout.
 
     };
 
-    @Subscribe
     public void onLongCommentsReadyEvent(CommentsModel model) {
         if (model == null) {
             return;
@@ -238,5 +236,9 @@ public class CommentActivity extends BaseActivity implements SwipeRefreshLayout.
             updateCommentList(model, Constants.COMMENT_TYPE_SHORT);
             mShortCommentReady = true;
         }
+    }
+
+    public void onEventMainThread(CommentsModel model) {
+        onLongCommentsReadyEvent(model);
     }
 }

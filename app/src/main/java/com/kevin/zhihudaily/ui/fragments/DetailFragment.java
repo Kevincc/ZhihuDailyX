@@ -24,27 +24,24 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.baidu.mobstat.StatService;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
-import com.kevin.zhihudaily.provider.DataService;
-import com.kevin.zhihudaily.model.NewsModel;
 import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.provider.DataService;
 import com.kevin.zhihudaily.ui.activities.CommentActivity;
 import com.kevin.zhihudaily.ui.activities.DetailActivity;
-import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.common.EventBus;
-import com.kevin.zhihudaily.utils.Utils;
 import com.kevin.zhihudaily.ui.views.ExWebView;
+import com.kevin.zhihudaily.utils.DebugLog;
+import com.kevin.zhihudaily.utils.Utils;
 import com.squareup.picasso.Picasso;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import de.halfbit.tinybus.Subscribe;
+import de.greenrobot.event.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -205,12 +202,14 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getInstance().register(this);
+//        EventBus.getInstance().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-        EventBus.getInstance().unregister(this);
+//        EventBus.getInstance().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -477,7 +476,6 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         mWebView.loadDataWithBaseURL("file:///android_asset/", htmldata, "text/html", "UTF-8", null);
     }
 
-    @Subscribe
     public void onNewsDetailReadyEvent(NewsModel model) {
         if (model != null && model.getId() == mNewsModel.getId()) {
             if (model != null) {
@@ -495,6 +493,10 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
             }
 
         }
+    }
+
+    public void onEventMainThread(NewsModel model) {
+        onNewsDetailReadyEvent(model);
     }
 
     private class ExWebViewClient extends WebViewClient {

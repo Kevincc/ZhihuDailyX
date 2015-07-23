@@ -4,23 +4,20 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
-
+import com.kevin.zhihudaily.common.Constants;
+import com.kevin.zhihudaily.common.Constants.Action;
 import com.kevin.zhihudaily.http.ZhihuRequest;
 import com.kevin.zhihudaily.model.CommentsModel;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
-import com.kevin.zhihudaily.common.Constants;
-import com.kevin.zhihudaily.common.Constants.Action;
 import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.common.EventBus;
+import de.greenrobot.event.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
-import de.halfbit.tinybus.Produce;
 
 public class DataService extends IntentService {
 
@@ -135,7 +132,8 @@ public class DataService extends IntentService {
         DailyNewsModel dailyNewsModel = dao.readDaliyNewsList(date);
         if (dailyNewsModel != null) {
             // notify ui to update
-            EventBus.getInstance().post(dailyNewsModel);
+//            EventBus.getInstance().post(dailyNewsModel);
+            EventBus.getDefault().post(dailyNewsModel);
         }
     }
 
@@ -144,7 +142,8 @@ public class DataService extends IntentService {
         DebugLog.e("==Model size==" + lastestNewsModel.getNewsList().size());
         if (lastestNewsModel != null) {
             // notify ui to update
-            EventBus.getInstance().post(lastestNewsModel);
+//            EventBus.getInstance().post(lastestNewsModel);
+            EventBus.getDefault().post(lastestNewsModel);
         }
     }
 
@@ -158,7 +157,8 @@ public class DataService extends IntentService {
             // Update to db
 
             // Notify ui to update
-            EventBus.getInstance().post(model);
+//            EventBus.getInstance().post(model);
+            EventBus.getDefault().post(model);
         }
     }
 
@@ -179,7 +179,8 @@ public class DataService extends IntentService {
                     DebugLog.d("==Model=" + model.getDisplay_date());
                     mDailyNewsModel = model;
                     // notify ui to update
-                    EventBus.getInstance().post(model);
+//                    EventBus.getInstance().post(model);
+                    EventBus.getDefault().post(model);
                 }
 
             }
@@ -189,7 +190,6 @@ public class DataService extends IntentService {
         DebugLog.d("==OUT=" + SystemClock.currentThreadTimeMillis());
     }
 
-    @Produce
     public DailyNewsModel getLastDailyNewsModel() {
         return mDailyNewsModel;
     }
@@ -198,7 +198,8 @@ public class DataService extends IntentService {
         DailyNewsModel model = ZhihuRequest.getRequestService().getDailyNewsByDate(date);
         if (model != null) {
             // notify ui to update
-            EventBus.getInstance().post(model);
+//            EventBus.getInstance().post(model);
+            EventBus.getDefault().post(model);
         }
     }
 
@@ -208,7 +209,8 @@ public class DataService extends IntentService {
         if (model != null) {
             // Notify ui to update
             //            mBroadcastNotifier.notifyNewsBodyDataReady(date, id);
-            EventBus.getInstance().post(model);
+//            EventBus.getInstance().post(model);
+            EventBus.getDefault().post(model);
         }
     }
 
@@ -278,7 +280,8 @@ public class DataService extends IntentService {
         CommentsModel model = ZhihuRequest.getRequestService().getLongCommentsById(id);
         model.setComments_type(Constants.COMMENT_TYPE_LONG);
 
-        EventBus.getInstance().post(model);
+//        EventBus.getInstance().post(model);
+        EventBus.getDefault().post(model);
     }
 
     private void requestShortComments(int id) {
@@ -286,7 +289,8 @@ public class DataService extends IntentService {
         CommentsModel model = ZhihuRequest.getRequestService().getShortCommentsById(id);
         model.setComments_type(Constants.COMMENT_TYPE_SHORT);
 
-        EventBus.getInstance().post(model);
+//        EventBus.getInstance().post(model);
+        EventBus.getDefault().post(model);
     }
 
 }

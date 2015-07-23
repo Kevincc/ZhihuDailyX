@@ -6,21 +6,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.baidu.mobstat.StatService;
-import com.kevin.zhihudaily.common.Constants;
-import com.kevin.zhihudaily.ui.fragments.DetailFragment;
-import com.kevin.zhihudaily.utils.DebugLog;
-import com.kevin.zhihudaily.common.EventBus;
 import com.kevin.zhihudaily.R;
+import com.kevin.zhihudaily.common.Constants;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
+import com.kevin.zhihudaily.ui.fragments.DetailFragment;
+import com.kevin.zhihudaily.utils.DebugLog;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by chenchao04 on 2014-12-04.
@@ -67,12 +64,10 @@ public class DetailActivity extends BaseActivity implements DetailFragment.OnFra
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getInstance().register(this);
     }
 
     @Override
     protected void onStop() {
-        EventBus.getInstance().unregister(this);
         super.onStop();
     }
 

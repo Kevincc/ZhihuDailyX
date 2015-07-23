@@ -2,9 +2,6 @@ package com.kevin.zhihudaily.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,36 +52,6 @@ public class DailyNewsModel implements Parcelable {
 
     public void setDisplay_date(String display_date) {
         this.display_date = display_date;
-    }
-
-    public boolean parseJSON(JSONObject json) {
-        if (json == null) {
-            return false;
-        }
-        this.date = json.optString("date");
-        try {
-            JSONArray newsaArray = json.getJSONArray("news");
-            int size = newsaArray.length();
-            for (int i = 0; i < size; i++) {
-                NewsModel model = new NewsModel();
-                model.parseJSON(newsaArray.getJSONObject(i));
-                this.news.add(model);
-            }
-
-            JSONArray storiesArray = json.getJSONArray("top_stories");
-            size = storiesArray.length();
-            for (int i = 0; i < size; i++) {
-                NewsModel model = new NewsModel();
-                model.parseJSON(storiesArray.getJSONObject(i));
-                this.top_stories.add(model);
-            }
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        this.display_date = json.optString("display_date");
-        return true;
     }
 
     @Override public int describeContents() {

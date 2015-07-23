@@ -2,7 +2,6 @@ package com.kevin.zhihudaily.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import org.json.JSONObject;
 
 public class NewsModel extends BaseNewsModel implements Parcelable {
     public NewsModel() {
@@ -47,18 +46,6 @@ public class NewsModel extends BaseNewsModel implements Parcelable {
 
     public void setIs_top_story(int is_top_story) {
         this.is_top_story = is_top_story;
-    }
-
-    @Override
-    public boolean parseJSON(JSONObject json) {
-        // TODO Auto-generated method stub
-        if (json == null) {
-            return false;
-        }
-        this.body = json.optString("body");
-        //        this.js = json.optString("js");
-        //        this.css = json.optString("css");
-        return super.parseJSON(json);
     }
 
     @Override public int describeContents() {

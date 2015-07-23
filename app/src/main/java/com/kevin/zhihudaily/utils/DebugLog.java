@@ -12,6 +12,7 @@
 package com.kevin.zhihudaily.utils;
 
 import android.util.Log;
+import com.kevin.zhihudaily.BuildConfig;
 
 public class DebugLog {
 
@@ -25,7 +26,7 @@ public class DebugLog {
     }
 
     public static boolean isDebuggable() {
-        return DEBUG;
+        return BuildConfig.DEBUG;
     }
 
     private static String createLog(String log) {

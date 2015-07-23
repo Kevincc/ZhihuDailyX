@@ -20,7 +20,6 @@ import com.baidu.mobstat.StatService;
 import com.kevin.zhihudaily.R;
 import com.kevin.zhihudaily.ZhihuDailyApplication;
 import com.kevin.zhihudaily.common.Constants;
-import com.kevin.zhihudaily.common.EventBus;
 import com.kevin.zhihudaily.model.DailyNewsModel;
 import com.kevin.zhihudaily.model.NewsModel;
 import com.kevin.zhihudaily.provider.DataBaseManager;
@@ -37,7 +36,7 @@ import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import de.halfbit.tinybus.Subscribe;
+import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener, NewsListAdapter.OnItemClickListener {
@@ -85,13 +84,15 @@ public class MainActivity extends BaseActivity
     protected void onStart() {
         super.onStart();
         DebugLog.e("==onStart");
-        EventBus.getInstance().register(this);
+//        EventBus.getInstance().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         DebugLog.e("==onStop");
-        EventBus.getInstance().unregister(this);
+//        EventBus.getInstance().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -238,7 +239,6 @@ public class MainActivity extends BaseActivity
         startService(intent);
     }
 
-    @Subscribe
     public void onDailyNewsModel(DailyNewsModel model) {
         // Set SwipeRefreshLayout to stop
         mSwipeLayout.setRefreshing(false);
@@ -251,6 +251,10 @@ public class MainActivity extends BaseActivity
         mIndexDate = model.getDate();
         DebugLog.d("==Index date==" + mIndexDate);
         updateNewsList(model);
+    }
+
+    public void onEventMainThread(DailyNewsModel model) {
+        onDailyNewsModel(model);
     }
 
     private void updateNewsList(DailyNewsModel model) {
