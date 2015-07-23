@@ -30,8 +30,11 @@ import com.kevin.zhihudaily.utils.DebugLog;
 import com.kevin.zhihudaily.utils.Utils;
 import de.greenrobot.event.EventBus;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity2 extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener, NewsListAdapter.OnItemClickListener {
@@ -114,6 +117,8 @@ public class MainActivity2 extends BaseActivity
         setupNavigationDrawer();
         setupSwipeLayout();
         setupListView();
+
+        requestLastestNews();
     }
 
     @Override
@@ -236,6 +241,18 @@ public class MainActivity2 extends BaseActivity
     public void onRefresh() {
         mIsResetList = true;
         requestNewsList(mTodayDateString, true);
+    }
+
+    private void requestLastestNews() {
+        Calendar calendar = Calendar.getInstance();
+        mTodayDate = calendar.getTime();
+
+        // request latest news
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        String todayDate = formatter.format(mTodayDate);
+        mIndexDate = todayDate;
+        mTodayDateString = todayDate;
+        requestNewsList(todayDate, true);
     }
 
     private void requestNewsList(String date, boolean isToday) {
